@@ -1,0 +1,337 @@
+/* style.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-green: #2e7d32;
+  --green-light: #4caf50;
+  --green-soft: #e8f5e9;
+  --green-accent: #1b5e20;
+  --white: #ffffff;
+  --gray-bg: #f9fafb;
+  --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.02), 0 6px 6px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --card-hover-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1), 0 4px 8px -2px rgba(0, 0, 0, 0.05);
+  --border-light: #eef2f0;
+  --text-dark: #1e2a1e;
+  --text-muted: #5a6e5a;
+  --whatsapp-green: #25d366;
+  --whatsapp-dark: #128c7e;
+  --radius-md: 20px;
+  --radius-sm: 16px;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+  background-color: var(--gray-bg);
+  color: var(--text-dark);
+  line-height: 1.4;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ===== HEADER ===== */
+.hero-header {
+  background: linear-gradient(135deg, #1f3b1a 0%, #2e7d32 100%);
+  color: white;
+  padding: 28px 0 32px 0;
+  border-radius: 0 0 32px 32px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.leaf-icon {
+  font-size: 2.8rem;
+  background: rgba(255,255,255,0.2);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 60px;
+  backdrop-filter: blur(2px);
+}
+
+.brand-text h1 {
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.tagline {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+/* ===== MAIN LAYOUT ===== */
+.main-content {
+  margin-top: 28px;
+  margin-bottom: 60px;
+}
+
+/* section headers */
+.section-header {
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: #1a3b1a;
+}
+
+.section-sub {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+/* product grid - responsive */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+/* product card */
+.product-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 20px 18px 22px;
+  transition: all 0.25s ease;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-light);
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-hover-shadow);
+  border-color: #d4e2d0;
+}
+
+.veg-emoji {
+  font-size: 3.2rem;
+  background: var(--green-soft);
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 35px;
+  margin-bottom: 16px;
+}
+
+.product-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #1e2a1e;
+}
+
+.product-price {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-green);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.price-unit {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.quantity-control {
+  margin-top: auto;
+}
+
+.quantity-control label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.quantity-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #e2e8e2;
+  border-radius: 44px;
+  font-size: 1rem;
+  font-weight: 500;
+  font-family: inherit;
+  background: var(--white);
+  transition: all 0.2s;
+}
+
+.quantity-input:focus {
+  outline: none;
+  border-color: var(--green-light);
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+/* customer section */
+.customer-section {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 28px 24px;
+  margin: 16px 0 28px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border-light);
+}
+
+.customer-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #2c4a2c;
+}
+
+.input-group input,
+.input-group textarea {
+  padding: 14px 16px;
+  border: 1.5px solid #e2ece2;
+  border-radius: 20px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  background: #fefefe;
+}
+
+.input-group input:focus,
+.input-group textarea:focus {
+  border-color: var(--green-light);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+/* order button */
+.order-action {
+  text-align: center;
+  margin-top: 12px;
+  margin-bottom: 20px;
+}
+
+.whatsapp-order-btn {
+  background: var(--whatsapp-green);
+  border: none;
+  padding: 16px 28px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: white;
+  border-radius: 60px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 18px rgba(37, 211, 102, 0.25);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.whatsapp-order-btn:hover {
+  background: var(--whatsapp-dark);
+  transform: scale(0.98);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.btn-icon {
+  font-size: 1.3rem;
+  transition: transform 0.2s;
+}
+
+.whatsapp-order-btn:hover .btn-icon {
+  transform: translateX(4px);
+}
+
+.secure-note {
+  font-size: 0.75rem;
+  color: #6a7c6a;
+  margin-top: 14px;
+}
+
+/* footer */
+.footer-note {
+  background: #eef3ec;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #3d5a3d;
+  border-top: 1px solid #ddebe0;
+}
+
+/* responsive tweaks */
+@media (max-width: 640px) {
+  .container {
+    padding: 0 16px;
+  }
+  .hero-header {
+    padding: 20px 0 24px;
+  }
+  .brand-text h1 {
+    font-size: 1.3rem;
+  }
+  .leaf-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 2rem;
+  }
+  .product-grid {
+    gap: 16px;
+  }
+  .whatsapp-order-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 1.05rem;
+  }
+  .section-header h2 {
+    font-size: 1.5rem;
+  }
+}
+
+/* desktop larger screens */
+@media (min-width: 1024px) {
+  .product-grid {
+    gap: 30px;
+  }
+  .customer-section {
+    padding: 32px 32px;
+  }
+}

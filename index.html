@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  
+  <!-- Primary SEO Meta Tags -->
+  <title>Sri Bhavanarayana Vegetable Mart | Fresh Vegetables Online</title>
+  <meta name="description" content="Order fresh vegetables online from Sri Bhavanarayana Vegetable Mart. Same-day delivery, farm-fresh prices, and easy WhatsApp ordering. Tomato, potato, onion & more.">
+  <meta name="keywords" content="vegetable shop online, fresh vegetables delivery, buy vegetables near me, tomato price, potato, onion, okra, local grocery, WhatsApp order vegetables, Sri Bhavanarayana">
+  <meta name="author" content="Sri Bhavanarayana Vegetable Mart">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://yourdomain.com/">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="Sri Bhavanarayana Vegetable Mart – Fresh Veggies Delivered">
+  <meta property="og:description" content="Order fresh vegetables online. Best prices, same-day delivery, WhatsApp order.">
+  <meta property="og:image" content="https://yourdomain.com/og-image.jpg"> <!-- replace with actual image URL -->
+  <meta property="og:url" content="https://yourdomain.com/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Favicon (optional but good) -->
+  <link rel="icon" type="image/png" href="favicon.png">
+
+  <!-- Google Fonts + modern system font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- JSON-LD Structured Data (LocalBusiness) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "GroceryStore",
+    "name": "Sri Bhavanarayana Vegetable Mart",
+    "description": "Fresh vegetable store offering home delivery and WhatsApp ordering.",
+    "image": "https://yourdomain.com/logo.jpg",
+    "telephone": "+918367645999",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Main Road, Near Temple",
+      "addressLocality": "Your City",
+      "addressRegion": "State",
+      "postalCode": "000000",
+      "addressCountry": "IN"
+    },
+    "openingHours": "Mo-Su 08:00-21:00",
+    "sameAs": [
+      "https://wa.me/918367645999"
+    ],
+    "priceRange": "₹₹"
+  }
+  </script>
+</head>
+<body>
+  <div class="app-wrapper">
+    <!-- Header Section -->
+    <header class="hero-header">
+      <div class="container">
+        <div class="brand">
+          <span class="leaf-icon" aria-label="Green leaf icon">🌿</span>
+          <div class="brand-text">
+            <h1>Sri Bhavanarayana Vegetable Mart</h1>
+            <p class="tagline">Fresh Vegetables Delivered to Your Doorstep</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container main-content">
+      <!-- Product Section -->
+      <section class="products-section">
+        <div class="section-header">
+          <h2>🌱 Shop by KG (Global Selection)</h2>
+          <p class="section-sub">Farm-fresh, crisp & affordable – over 20 varieties</p>
+        </div>
+        <div class="product-grid" id="productGrid">
+          <!-- dynamic veg cards injected via JS -->
+        </div>
+      </section>
+
+      <!-- Customer Details Section -->
+      <section class="customer-section">
+        <div class="section-header">
+          <h2>📋 Delivery Details</h2>
+          <p class="section-sub">We need your info to send order confirmation</p>
+        </div>
+        <div class="customer-card">
+          <div class="input-group">
+            <label for="customerName">Full name</label>
+            <input type="text" id="customerName" placeholder="e.g. Rajesh Kumar" autocomplete="name">
+          </div>
+          <div class="input-group">
+            <label for="customerMobile">Mobile number (WhatsApp)</label>
+            <input type="tel" id="customerMobile" placeholder="e.g. 9876543210" autocomplete="tel">
+          </div>
+          <div class="input-group">
+            <label for="deliveryAddress">Delivery address</label>
+            <textarea id="deliveryAddress" rows="3" placeholder="House / Flat No., Street, Landmark, City, Pincode"></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- Order Button (WhatsApp) -->
+      <div class="order-action">
+        <button id="orderWhatsAppBtn" class="whatsapp-order-btn" aria-label="Order on WhatsApp">
+          <span>📲 Order on WhatsApp</span>
+          <span class="btn-icon" aria-hidden="true">➡️</span>
+        </button>
+        <p class="secure-note">✓ Share order via WhatsApp • Freshness guaranteed</p>
+      </div>
+    </main>
+
+    <footer class="footer-note">
+      <div class="container">
+        <p>🌾 Same-day delivery • Pay on delivery available • Trusted local mart</p>
+      </div>
+    </footer>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
