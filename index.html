@@ -2,38 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="google-site-verification" content="7q0ARlzkRKeaJNR1Xei_OYaqJ7A3OkaT8VWAGyJi0EM" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
   <!-- Primary SEO Meta Tags -->
-  <title>Sri Bhavanarayana Vegetable Mart | Fresh Vegetables Online</title>
-  <meta name="description" content="Order fresh vegetables online from Sri Bhavanarayana Vegetable Mart. Same-day delivery, farm-fresh prices, and easy WhatsApp ordering. Tomato, potato, onion & more.">
-  <meta name="keywords" content="vegetable shop online, fresh vegetables delivery, buy vegetables near me, tomato price, potato, onion, okra, local grocery, WhatsApp order vegetables, Sri Bhavanarayana">
-  <meta name="author" content="Sri Bhavanarayana Vegetable Mart">
+  <title>SREE VEG MART | Fresh Vegetables Online</title>
+  <meta name="description" content="Order fresh vegetables online from SREE VEG MART. Same-day delivery, farm-fresh prices, and easy WhatsApp ordering.">
+  <meta name="keywords" content="vegetable shop online, fresh vegetables delivery, buy vegetables near me, tomato price, potato, onion, okra, local grocery, WhatsApp order vegetables, Sree Veg Mart">
+  <meta name="author" content="SREE VEG MART">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://sandeepsandy25.github.io/Veg-shop/">
 
   <!-- Open Graph / Social Media -->
-  <meta property="og:title" content="Sri Bhavanarayana Vegetable Mart – Fresh Veggies Delivered">
+  <meta property="og:title" content="SREE VEG MART – Fresh Veggies Delivered">
   <meta property="og:description" content="Order fresh vegetables online. Best prices, same-day delivery, WhatsApp order.">
-  <meta property="og:image" content="https://yourdomain.com/og-image.jpg"> <!-- replace with actual image URL -->
-  <meta property="og:url" content="https://yourdomain.com/">
+  <meta property="og:image" content="https://yourdomain.com/og-image.jpg">
+  <meta property="og:url" content="https://sandeepsandy25.github.io/Veg-shop/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
 
-  <!-- Favicon (optional but good) -->
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
 
-  <!-- Google Fonts + modern system font -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
-  <!-- JSON-LD Structured Data (LocalBusiness) -->
+  <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "GroceryStore",
-    "name": "Sri Bhavanarayana Vegetable Mart",
+    "name": "SREE VEG MART",
     "description": "Fresh vegetable store offering home delivery and WhatsApp ordering.",
     "image": "https://yourdomain.com/logo.jpg",
     "telephone": "+918367645999",
@@ -46,22 +45,24 @@
       "addressCountry": "IN"
     },
     "openingHours": "Mo-Su 08:00-21:00",
-    "sameAs": [
-      "https://wa.me/918367645999"
-    ],
+    "sameAs": ["https://wa.me/918367645999"],
     "priceRange": "₹₹"
   }
   </script>
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- Header Section -->
+    <!-- Header Section with new devotional headings -->
     <header class="hero-header">
       <div class="container">
+        <div class="devotional-titles">
+          <h2 class="swami-title">JAI SRI BHAVANARAYANA SWAMI</h2>
+          <h3 class="ramanuja-title">SRI MATHE RAMANUJA SWAMI &nbsp;|&nbsp; శ్రీమతే రామానుజాయ నమః</h3>
+        </div>
         <div class="brand">
           <span class="leaf-icon" aria-label="Green leaf icon">🌿</span>
           <div class="brand-text">
-            <h1>Sri Bhavanarayana Vegetable Mart</h1>
+            <h1>SREE VEG MART</h1>
             <p class="tagline">Fresh Vegetables Delivered to Your Doorstep</p>
           </div>
         </div>
@@ -76,7 +77,17 @@
           <p class="section-sub">Farm-fresh, crisp & affordable – over 20 varieties</p>
         </div>
         <div class="product-grid" id="productGrid">
-          <!-- dynamic veg cards injected via JS -->
+          <!-- dynamic veg cards injected via JS (English + Telugu names) -->
+        </div>
+      </section>
+
+      <!-- Bill Summary Section (dynamic) -->
+      <section class="bill-summary" id="billSummary" style="display: none;">
+        <div class="bill-card">
+          <h3>🧾 Your Order Bill</h3>
+          <div id="billDetails"></div>
+          <div class="total-amount" id="totalAmount">Total: ₹0</div>
+          <p class="cod-note">💵 Payment: Cash on Delivery only</p>
         </div>
       </section>
 
@@ -102,7 +113,7 @@
         </div>
       </section>
 
-      <!-- Order Button (WhatsApp) -->
+      <!-- Order Button -->
       <div class="order-action">
         <button id="orderWhatsAppBtn" class="whatsapp-order-btn" aria-label="Order on WhatsApp">
           <span>📲 Order on WhatsApp</span>
@@ -111,6 +122,17 @@
         <p class="secure-note">✓ Share order via WhatsApp • Freshness guaranteed</p>
       </div>
     </main>
+
+    <!-- Popup overlay for success message -->
+    <div id="orderSuccessPopup" class="popup-overlay">
+      <div class="popup-card">
+        <div class="tick-icon">✅</div>
+        <h3>Order Placed Successfully!</h3>
+        <p>Your order has been sent via WhatsApp.<br>We will contact you shortly.</p>
+        <p class="cod-confirm">💵 Cash on Delivery only</p>
+        <button id="closePopupBtn" class="close-popup">OK</button>
+      </div>
+    </div>
 
     <footer class="footer-note">
       <div class="container">
