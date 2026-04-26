@@ -36,13 +36,36 @@ body {
   padding: 0 20px;
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER with Devotional Titles ===== */
 .hero-header {
   background: linear-gradient(135deg, #1f3b1a 0%, #2e7d32 100%);
   color: white;
-  padding: 28px 0 32px 0;
+  padding: 20px 0 28px 0;
   border-radius: 0 0 32px 32px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.devotional-titles {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.swami-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  background: rgba(255,215,0,0.2);
+  display: inline-block;
+  padding: 4px 16px;
+  border-radius: 40px;
+  margin-bottom: 8px;
+}
+
+.ramanuja-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.95;
+  word-break: keep-all;
 }
 
 .brand {
@@ -50,6 +73,7 @@ body {
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
+  margin-top: 8px;
 }
 
 .leaf-icon {
@@ -65,17 +89,16 @@ body {
 }
 
 .brand-text h1 {
-  font-size: 1.7rem;
-  font-weight: 700;
-  letter-spacing: -0.3px;
-  line-height: 1.2;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-align: center;
 }
 
 .tagline {
   font-size: 0.9rem;
   opacity: 0.9;
   margin-top: 6px;
-  font-weight: 400;
 }
 
 /* ===== MAIN LAYOUT ===== */
@@ -84,7 +107,6 @@ body {
   margin-bottom: 60px;
 }
 
-/* section headers */
 .section-header {
   margin-bottom: 20px;
 }
@@ -101,15 +123,14 @@ body {
   margin-top: 4px;
 }
 
-/* product grid - responsive */
+/* product grid */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
-  margin-bottom: 48px;
+  margin-bottom: 32px;
 }
 
-/* product card */
 .product-card {
   background: var(--white);
   border-radius: var(--radius-md);
@@ -140,10 +161,17 @@ body {
 }
 
 .product-name {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
   color: #1e2a1e;
+}
+
+.product-name-telugu {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 400;
 }
 
 .product-price {
@@ -192,6 +220,58 @@ body {
   outline: none;
   border-color: var(--green-light);
   box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+/* Bill Summary */
+.bill-summary {
+  margin: 20px 0 16px;
+}
+
+.bill-card {
+  background: #fff8e7;
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  border-left: 6px solid var(--primary-green);
+  box-shadow: var(--card-shadow);
+}
+
+.bill-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  color: #2c4a2c;
+}
+
+#billDetails {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.bill-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed #ddd;
+  padding: 6px 0;
+}
+
+.total-amount {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-top: 10px;
+  text-align: right;
+  border-top: 2px solid var(--primary-green);
+  padding-top: 10px;
+}
+
+.cod-note {
+  font-size: 0.8rem;
+  color: #b85c00;
+  margin-top: 10px;
+  font-weight: 500;
+  background: #ffe0b5;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
 }
 
 /* customer section */
@@ -268,22 +348,91 @@ body {
 .whatsapp-order-btn:hover {
   background: var(--whatsapp-dark);
   transform: scale(0.98);
-  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-}
-
-.btn-icon {
-  font-size: 1.3rem;
-  transition: transform 0.2s;
-}
-
-.whatsapp-order-btn:hover .btn-icon {
-  transform: translateX(4px);
 }
 
 .secure-note {
   font-size: 0.75rem;
   color: #6a7c6a;
   margin-top: 14px;
+}
+
+/* Popup overlay */
+.popup-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-card {
+  background: white;
+  border-radius: 32px;
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 320px;
+  width: 85%;
+  box-shadow: 0 20px 30px rgba(0,0,0,0.2);
+  animation: fadeInUp 0.3s ease;
+}
+
+.tick-icon {
+  font-size: 4rem;
+  background: var(--primary-green);
+  color: white;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 3rem;
+}
+
+.popup-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  color: #1e2a1e;
+}
+
+.popup-card p {
+  margin-bottom: 16px;
+  color: #555;
+}
+
+.cod-confirm {
+  background: #f1f1f1;
+  padding: 8px;
+  border-radius: 40px;
+  font-weight: 500;
+}
+
+.close-popup {
+  background: var(--primary-green);
+  border: none;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 40px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* footer */
@@ -296,21 +445,19 @@ body {
   border-top: 1px solid #ddebe0;
 }
 
-/* responsive tweaks */
+/* responsive */
 @media (max-width: 640px) {
   .container {
     padding: 0 16px;
   }
-  .hero-header {
-    padding: 20px 0 24px;
-  }
   .brand-text h1 {
-    font-size: 1.3rem;
+    font-size: 1.6rem;
   }
-  .leaf-icon {
-    width: 48px;
-    height: 48px;
-    font-size: 2rem;
+  .swami-title {
+    font-size: 1rem;
+  }
+  .ramanuja-title {
+    font-size: 0.75rem;
   }
   .product-grid {
     gap: 16px;
@@ -318,20 +465,11 @@ body {
   .whatsapp-order-btn {
     width: 100%;
     justify-content: center;
-    padding: 14px 20px;
-    font-size: 1.05rem;
-  }
-  .section-header h2 {
-    font-size: 1.5rem;
   }
 }
 
-/* desktop larger screens */
 @media (min-width: 1024px) {
   .product-grid {
     gap: 30px;
-  }
-  .customer-section {
-    padding: 32px 32px;
   }
 }
