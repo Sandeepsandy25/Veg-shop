@@ -1,0 +1,29 @@
+{
+  "vegetables": [
+    { "id": "tomato", "name": "Tomato", "telugu": "టమోటా", "price": 40, "emoji": "🍅", "unit": "kg" },
+    { "id": "potato", "name": "Potato", "telugu": "ఆలుగడ్డ", "price": 35, "emoji": "🥔", "unit": "kg" },
+    { "id": "onion", "name": "Onion", "telugu": "ఉల్లిపాయ", "price": 30, "emoji": "🧅", "unit": "kg" },
+    { "id": "okra", "name": "Ladies Finger", "telugu": "బెండకాయ", "price": 50, "emoji": "🌱", "unit": "kg" },
+    { "id": "carrot", "name": "Carrot", "telugu": "క్యారెట్", "price": 45, "emoji": "🥕", "unit": "kg" },
+    { "id": "cucumber", "name": "Cucumber", "telugu": "దోసకాయ", "price": 30, "emoji": "🥒", "unit": "kg" },
+    { "id": "bell_pepper", "name": "Bell Pepper", "telugu": "క్యాప్సికమ్", "price": 70, "emoji": "🫑", "unit": "kg" },
+    { "id": "broccoli", "name": "Broccoli", "telugu": "బ్రోకలీ", "price": 90, "emoji": "🥦", "unit": "kg" },
+    { "id": "cauliflower", "name": "Cauliflower", "telugu": "గోబీ", "price": 40, "emoji": "🥦", "unit": "kg" },
+    { "id": "spinach", "name": "Spinach", "telugu": "పాలకూర", "price": 25, "emoji": "🥬", "unit": "bunch" },
+    { "id": "cabbage", "name": "Cabbage", "telugu": "క్యాబేజీ", "price": 25, "emoji": "🥬", "unit": "kg" },
+    { "id": "eggplant", "name": "Brinjal", "telugu": "వంకాయ", "price": 35, "emoji": "🍆", "unit": "kg" },
+    { "id": "radish", "name": "Radish", "telugu": "ముల్లంగి", "price": 28, "emoji": "🥕", "unit": "kg" },
+    { "id": "pumpkin", "name": "Pumpkin", "telugu": "గుమ్మడికాయ", "price": 30, "emoji": "🎃", "unit": "kg" },
+    { "id": "zucchini", "name": "Zucchini", "telugu": "జుచ్చిని", "price": 65, "emoji": "🥒", "unit": "kg" },
+    { "id": "green_beans", "name": "Green Beans", "telugu": "బీన్స్", "price": 55, "emoji": "🫘", "unit": "kg" },
+    { "id": "corn", "name": "Sweet Corn", "telugu": "మొక్కజొన్న", "price": 40, "emoji": "🌽", "unit": "kg" },
+    { "id": "garlic", "name": "Garlic", "telugu": "వెల్లుల్లి", "price": 120, "emoji": "🧄", "unit": "kg" },
+    { "id": "ginger", "name": "Ginger", "telugu": "అల్లం", "price": 110, "emoji": "🫚", "unit": "kg" },
+    { "id": "asparagus", "name": "Asparagus", "telugu": "ఆస్పరాగస్", "price": 150, "emoji": "🌿", "unit": "bundle" },
+    { "id": "leek", "name": "Leek", "telugu": "లీక్", "price": 80, "emoji": "🧅", "unit": "kg" },
+    { "id": "celery", "name": "Celery", "telugu": "సెలరీ", "price": 70, "emoji": "🥬", "unit": "kg" },
+    { "id": "kale", "name": "Kale", "telugu": "కాలే", "price": 95, "emoji": "🥬", "unit": "kg" },
+    { "id": "beetroot", "name": "Beetroot", "telugu": "బీట్రూట్", "price": 45, "emoji": "🟣", "unit": "kg" },
+    { "id": "turnip", "name": "Turnip", "telugu": "టర్నిప్", "price": 38, "emoji": "🥕", "unit": "kg" }
+  ]
+}
