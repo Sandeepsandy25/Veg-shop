@@ -1,10 +1,9 @@
-// script.js - FIXED search & bill accumulation
+// script.js - FIXED search & bill accumulation, with better quantity placeholders
 
 let vegetables = [];
-let allProductCards = []; // store references to avoid DOM re-queries
+let allProductCards = [];
 const WHATSAPP_NUMBER = '918367645999';
 
-// Load vegetables from JSON then render
 async function loadVegetables() {
   try {
     const response = await fetch('vegetables.json');
@@ -18,16 +17,14 @@ async function loadVegetables() {
   }
   renderCategories();
   setupQuantityValidations();
-  updateBillSummary(); // initial bill
+  updateBillSummary();
   setupSearchAndFilter();
 }
 
-// Render all categories (once, never re-rendered on search)
 function renderCategories() {
   const container = document.getElementById('categoriesContainer');
   if (!container) return;
 
-  // Group by category
   const grouped = {};
   vegetables.forEach(veg => {
     if (!grouped[veg.category]) grouped[veg.category] = [];
@@ -52,7 +49,7 @@ function renderCategories() {
               <div class="product-price">₹${veg.price} <span class="price-unit">/ ${veg.unit}</span></div>
               <div class="quantity-control">
                 <label for="qty-${veg.id}">Quantity (${veg.unit})</label>
-                <input type="number" id="qty-${veg.id}" class="quantity-input" min="0" step="0.5" value="0" placeholder="0">
+                <input type="number" id="qty-${veg.id}" class="quantity-input" min="0" step="0.5" placeholder="e.g., 1 ${veg.unit}" value="">
               </div>
             </div>
           `).join('')}
@@ -61,8 +58,6 @@ function renderCategories() {
     `;
   }
   container.innerHTML = html;
-  
-  // Store references to all product cards after render
   allProductCards = Array.from(document.querySelectorAll('.product-card'));
 }
 
@@ -75,7 +70,6 @@ function getCategoryEmoji(cat) {
   return map[cat] || '🥗';
 }
 
-// Search filter – toggles visibility, NEVER destroys inputs
 function setupSearchAndFilter() {
   const searchInput = document.getElementById('searchInput');
   const clearBtn = document.getElementById('clearSearch');
@@ -85,7 +79,6 @@ function setupSearchAndFilter() {
   const filter = () => {
     const query = searchInput.value.trim().toLowerCase();
     let visibleCount = 0;
-
     allProductCards.forEach(card => {
       const name = card.getAttribute('data-veg-name');
       const telugu = card.getAttribute('data-veg-telugu');
@@ -93,22 +86,16 @@ function setupSearchAndFilter() {
       card.style.display = match ? '' : 'none';
       if (match) visibleCount++;
     });
-
-    // Hide empty categories
     document.querySelectorAll('.category-section').forEach(section => {
       const visibleCards = Array.from(section.querySelectorAll('.product-card')).filter(
         card => card.style.display !== 'none'
       );
       section.style.display = visibleCards.length === 0 && query !== '' ? 'none' : '';
     });
-
     clearBtn.style.display = query === '' ? 'none' : 'block';
     noResultsDiv.style.display = visibleCount === 0 && query !== '' ? 'block' : 'none';
     resultCountSpan.textContent = query === '' ? '' : `Found ${visibleCount} vegetable${visibleCount !== 1 ? 's' : ''}`;
-    
-    // IMPORTANT: Do NOT call updateBillSummary here – quantities are unchanged
   };
-
   searchInput.addEventListener('input', filter);
   clearBtn.addEventListener('click', () => {
     searchInput.value = '';
@@ -117,14 +104,15 @@ function setupSearchAndFilter() {
   });
 }
 
-// Get selected items from ALL inputs (including hidden ones)
 function getSelectedItems() {
   const selected = [];
   for (let veg of vegetables) {
     const input = document.getElementById(`qty-${veg.id}`);
     if (input) {
       let qty = parseFloat(input.value);
-      if (isNaN(qty) || qty <= 0) continue;
+      // If input is empty or not a number, treat as 0
+      if (isNaN(qty)) qty = 0;
+      if (qty <= 0) continue;
       qty = Math.round(qty * 10) / 10;
       selected.push({
         id: veg.id,
@@ -139,7 +127,6 @@ function getSelectedItems() {
   return selected;
 }
 
-// Update bill summary (called on every quantity change)
 function updateBillSummary() {
   const selected = getSelectedItems();
   const billSection = document.getElementById('billSummary');
@@ -168,18 +155,16 @@ function updateBillSummary() {
   billSection.style.display = 'block';
 }
 
-// Attach quantity listeners to ALL inputs (even those newly created – but we only create once)
 function setupQuantityValidations() {
   vegetables.forEach(veg => {
     const input = document.getElementById(`qty-${veg.id}`);
     if (input) {
-      // Remove existing listeners to avoid duplicates (safe)
       const handler = () => {
         let val = parseFloat(input.value);
-        if (isNaN(val)) input.value = 0;
-        else if (val < 0) input.value = 0;
+        if (isNaN(val)) input.value = '';
+        else if (val < 0) input.value = '';
         else if (val > 20) input.value = 20;
-        updateBillSummary();  // always update bill on any change
+        updateBillSummary();
       };
       input.removeEventListener('change', handler);
       input.removeEventListener('input', handler);
@@ -189,7 +174,6 @@ function setupQuantityValidations() {
   });
 }
 
-// WhatsApp message builder
 function buildWhatsAppMessage(name, mobile, address, items) {
   let lines = items.map(i => `${i.name} (${i.telugu}): ${i.quantity} ${i.unit}  ₹${i.total.toFixed(2)}`).join('\n');
   const total = items.reduce((s, i) => s + i.total, 0).toFixed(2);
@@ -220,7 +204,6 @@ function handleOrder() {
   showSuccessPopup();
 }
 
-// Fallback (used only if JSON fails)
 function getFallbackVegetables() {
   return [
     { id: 'tomato', name: 'Tomato', telugu: 'టమోటా', price: 40, emoji: '🍅', unit: 'kg', category: 'Fruit Vegetables' },
@@ -229,7 +212,6 @@ function getFallbackVegetables() {
   ];
 }
 
-// Initialise
 async function init() {
   await loadVegetables();
   document.getElementById('orderWhatsAppBtn').addEventListener('click', handleOrder);
