@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="google-site-verification" content="7q0ARlzkRKeaJNR1Xei_OYaqJ7A3OkaT8VWAGyJi0EM"/>
   
   <!-- Primary SEO Meta Tags -->
   <title>SREE VEG MART | Fresh Vegetables Online</title>
@@ -53,18 +52,27 @@
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- Header Section with new devotional headings -->
+    <!-- Header Section with devotional headings -->
     <header class="hero-header">
       <div class="container">
         <div class="devotional-titles">
           <h2 class="swami-title">JAI SRI BHAVANARAYANA SWAMI</h2>
-          <h3 class="ramanuja-title">SRI MATHE RAMANUJA SWAMI &nbsp;|&nbsp; శ్రీమతే రామానుజాయ నమః</h3>
+          <h3 class="ramanuja-title">శ్రీమతే రామానుజాయ నమః</h3>
         </div>
         <div class="brand">
           <span class="leaf-icon" aria-label="Green leaf icon">🌿</span>
           <div class="brand-text">
             <h1>SREE VEG MART</h1>
             <p class="tagline">Fresh Vegetables Delivered to Your Doorstep</p>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+          <div class="search-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="Search vegetables (English or Telugu)..." class="search-input">
+            <button id="clearSearch" class="clear-search" aria-label="Clear search">✖</button>
           </div>
         </div>
       </div>
@@ -76,13 +84,15 @@
         <div class="section-header">
           <h2>🌱 Shop by KG (Global Selection)</h2>
           <p class="section-sub">Farm-fresh, crisp & affordable – over 20 varieties</p>
+          <p class="search-result-count" id="searchResultCount"></p>
         </div>
         <div class="product-grid" id="productGrid">
-          <!-- dynamic veg cards injected via JS (English + Telugu names) -->
+          <!-- dynamic veg cards injected via JS -->
         </div>
+        <div id="noResultsMessage" class="no-results" style="display: none;">😕 No vegetables match your search. Try a different keyword.</div>
       </section>
 
-      <!-- Bill Summary Section (dynamic) -->
+      <!-- Bill Summary Section -->
       <section class="bill-summary" id="billSummary" style="display: none;">
         <div class="bill-card">
           <h3>🧾 Your Order Bill</h3>
