@@ -4,15 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   
-  <!-- Primary SEO Meta Tags -->
   <title>SREE VEG MART | Fresh Vegetables Online - Kakinada</title>
-  <meta name="description" content="Order fresh vegetables online from SREE VEG MART. Same-day delivery within 20 km of Kakinada. Farm-fresh prices, easy WhatsApp ordering.">
-  <meta name="keywords" content="vegetable shop online, fresh vegetables delivery Kakinada, buy vegetables near me, tomato price, potato, onion, okra, local grocery Kakinada, WhatsApp order vegetables, Sree Veg Mart">
+  <meta name="description" content="Order fresh vegetables online from SREE VEG MART. Same-day delivery within 20 km of Kakinada. 60+ varieties.">
+  <meta name="keywords" content="vegetable shop online, fresh vegetables delivery Kakinada, buy vegetables near me, tomato price, potato, onion, okra, local grocery Kakinada, WhatsApp order vegetables, Sree Veg Mart, leafy vegetables, root vegetables">
   <meta name="author" content="SREE VEG MART">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://sandeepsandy25.github.io/Veg-shop/">
 
-  <!-- Open Graph / Social Media -->
+  <!-- Open Graph -->
   <meta property="og:title" content="SREE VEG MART – Fresh Veggies Delivered in Kakinada">
   <meta property="og:description" content="Order fresh vegetables online. Best prices, same-day delivery within 20 km of Kakinada. WhatsApp order.">
   <meta property="og:image" content="https://yourdomain.com/og-image.jpg">
@@ -20,28 +19,21 @@
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
-  <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "GroceryStore",
     "name": "SREE VEG MART",
     "description": "Fresh vegetable store offering home delivery within 20 km of Kakinada and WhatsApp ordering.",
-    "image": "https://yourdomain.com/logo.jpg",
     "telephone": "+918367645999",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Main Road, Near Temple",
       "addressLocality": "Kakinada",
       "addressRegion": "Andhra Pradesh",
-      "postalCode": "533001",
       "addressCountry": "IN"
     },
     "openingHours": "Mo-Su 08:00-21:00",
@@ -61,7 +53,6 @@
 </head>
 <body>
   <div class="app-wrapper">
-    <!-- Header Section with devotional headings -->
     <header class="hero-header">
       <div class="container">
         <div class="devotional-titles">
@@ -69,31 +60,28 @@
           <h3 class="ramanuja-title">శ్రీమతే రామానుజాయ నమః</h3>
         </div>
         <div class="brand">
-          <span class="leaf-icon" aria-label="Green leaf icon">🌿</span>
+          <span class="leaf-icon">🌿</span>
           <div class="brand-text">
             <h1>SREE VEG MART</h1>
             <p class="tagline">Fresh Vegetables Delivered to Your Doorstep</p>
           </div>
         </div>
-
-        <!-- Search Bar -->
         <div class="search-container">
           <div class="search-wrapper">
             <span class="search-icon">🔍</span>
             <input type="text" id="searchInput" placeholder="Search vegetables (English or Telugu)..." class="search-input">
-            <button id="clearSearch" class="clear-search" aria-label="Clear search">✖</button>
+            <button id="clearSearch" class="clear-search">✖</button>
           </div>
+          <p class="search-result-count" id="searchResultCount"></p>
         </div>
       </div>
     </header>
 
     <main class="container main-content">
-      <!-- Delivery Zone Section (NEW) -->
+      <!-- Delivery Zone -->
       <div class="delivery-zone">
         <div class="delivery-card">
-          <div class="bike-animation">
-            <div class="bike"></div>
-          </div>
+          <div class="bike-animation"><div class="bike"></div></div>
           <div class="delivery-info">
             <div class="radius-board">
               <span class="radius-badge">🎯 20 KM DELIVERY ZONE</span>
@@ -105,20 +93,11 @@
         </div>
       </div>
 
-      <!-- Product Section -->
-      <section class="products-section">
-        <div class="section-header">
-          <h2>🌱 Shop by KG (Global Selection)</h2>
-          <p class="section-sub">Farm-fresh, crisp & affordable – over 20 varieties</p>
-          <p class="search-result-count" id="searchResultCount"></p>
-        </div>
-        <div class="product-grid" id="productGrid">
-          <!-- dynamic veg cards injected via JS -->
-        </div>
-        <div id="noResultsMessage" class="no-results" style="display: none;">😕 No vegetables match your search. Try a different keyword.</div>
-      </section>
+      <!-- Dynamic Categories Will Be Injected Here -->
+      <div id="categoriesContainer"></div>
+      <div id="noResultsMessage" class="no-results" style="display: none;">😕 No vegetables match your search. Try a different keyword.</div>
 
-      <!-- Bill Summary Section -->
+      <!-- Bill Summary Section (now appears right after products) -->
       <section class="bill-summary" id="billSummary" style="display: none;">
         <div class="bill-card">
           <h3>🧾 Your Order Bill</h3>
@@ -128,7 +107,7 @@
         </div>
       </section>
 
-      <!-- Customer Details Section -->
+      <!-- Customer Details -->
       <section class="customer-section">
         <div class="section-header">
           <h2>📋 Delivery Details</h2>
@@ -150,17 +129,15 @@
         </div>
       </section>
 
-      <!-- Order Button -->
       <div class="order-action">
-        <button id="orderWhatsAppBtn" class="whatsapp-order-btn" aria-label="Order on WhatsApp">
+        <button id="orderWhatsAppBtn" class="whatsapp-order-btn">
           <span>📲 Order on WhatsApp</span>
-          <span class="btn-icon" aria-hidden="true">➡️</span>
+          <span class="btn-icon">➡️</span>
         </button>
         <p class="secure-note">✓ Share order via WhatsApp • Freshness guaranteed</p>
       </div>
     </main>
 
-    <!-- Popup overlay for success message -->
     <div id="orderSuccessPopup" class="popup-overlay">
       <div class="popup-card">
         <div class="tick-icon">✅</div>
