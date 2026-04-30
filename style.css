@@ -162,14 +162,133 @@ body {
   font-weight: 500;
 }
 
-.no-results {
-  text-align: center;
-  padding: 40px;
-  background: white;
+/* ===== DELIVERY ZONE SECTION (NEW) ===== */
+.delivery-zone {
+  margin: 30px 0 20px;
+}
+
+.delivery-card {
+  background: linear-gradient(135deg, #fef9e6 0%, #fff8e7 100%);
   border-radius: var(--radius-md);
+  padding: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  border: 2px solid var(--primary-green);
+  box-shadow: var(--card-hover-shadow);
+  position: relative;
+  overflow: hidden;
+}
+
+.bike-animation {
+  flex: 0 0 100px;
+  text-align: center;
+}
+
+.bike {
+  width: 80px;
+  height: 80px;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%232e7d32"><path d="M15.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM5 12c-2.8 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5-2.2-5-5-5zm0 8.5c-1.9 0-3.5-1.6-3.5-3.5s1.6-3.5 3.5-3.5 3.5 1.6 3.5 3.5-1.6 3.5-3.5 3.5zm0-6.5c-1.7 0-3 1.3-3 3s1.3 3 3 3 3-1.3 3-3-1.3-3-3-3zm9-5c-1.4 0-2.5 1.1-2.5 2.5S12.6 12 14 12s2.5-1.1 2.5-2.5S15.4 7 14 7zM8 11h2v2H8v-2zm4-5h2v2h-2V6zm-2-3h2v2h-2V3z"/></svg>') no-repeat center;
+  background-size: contain;
+  animation: bikeRotate 2s linear infinite;
+}
+
+@keyframes bikeRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.delivery-info {
+  flex: 1;
+  text-align: center;
+}
+
+.radius-board {
+  background: var(--white);
+  border-radius: 28px;
+  padding: 18px 24px;
+  border-left: 8px solid var(--primary-green);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.radius-badge {
+  display: inline-block;
+  background: var(--primary-green);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 40px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.city-name {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a3b1a;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.city-name::after {
+  content: "📍";
+  font-size: 1.8rem;
+  margin-left: 8px;
+}
+
+.zone-desc {
   color: var(--text-muted);
   font-size: 1rem;
-  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+.radius-circle {
+  width: 60px;
+  height: 60px;
+  border: 3px solid var(--primary-green);
+  border-radius: 50%;
+  position: absolute;
+  bottom: -15px;
+  right: 20px;
+  opacity: 0.3;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+}
+
+/* Responsive delivery zone */
+@media (max-width: 640px) {
+  .delivery-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .city-name {
+    font-size: 1.6rem;
+  }
+  .radius-circle {
+    display: none;
+  }
 }
 
 /* ===== MAIN LAYOUT ===== */
