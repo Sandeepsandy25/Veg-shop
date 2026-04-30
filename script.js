@@ -1,7 +1,6 @@
 // script.js
 
 let vegetables = []; // Will be populated from JSON
-let currentFilteredVegs = [];
 
 const WHATSAPP_NUMBER = '918367645999';
 
@@ -46,35 +45,21 @@ async function loadVegetables() {
     console.warn('⚠️ Could not load vegetables.json, using fallback data', error);
     vegetables = fallbackVegetables;
   }
-  currentFilteredVegs = [...vegetables];
-  renderProductGrid(currentFilteredVegs);
+  renderProductGrid(); // render once, never re-render for search
   setupQuantityValidations();
   updateBillSummary(getSelectedItems());
   setupSearchAndFilter();
 }
 
-// Render cards based on filtered vegetables
-function renderProductGrid(vegArray) {
+// Render all cards once (no re-rendering on search)
+function renderProductGrid() {
   const gridContainer = document.getElementById('productGrid');
-  const noResultsDiv = document.getElementById('noResultsMessage');
-  const resultCountSpan = document.getElementById('searchResultCount');
-  
   if (!gridContainer) return;
-  
-  if (!vegArray || vegArray.length === 0) {
-    gridContainer.innerHTML = '';
-    if (noResultsDiv) noResultsDiv.style.display = 'block';
-    if (resultCountSpan) resultCountSpan.textContent = 'No vegetables found';
-    return;
-  }
-  
-  if (noResultsDiv) noResultsDiv.style.display = 'none';
-  if (resultCountSpan) resultCountSpan.textContent = `Found ${vegArray.length} vegetable${vegArray.length !== 1 ? 's' : ''}`;
-  
+
   let cardsHTML = '';
-  vegArray.forEach(veg => {
+  vegetables.forEach(veg => {
     cardsHTML += `
-      <div class="product-card" data-veg-id="${veg.id}">
+      <div class="product-card" data-veg-id="${veg.id}" data-veg-name="${veg.name.toLowerCase()}" data-veg-telugu="${veg.telugu.toLowerCase()}">
         <div class="veg-emoji">${veg.emoji}</div>
         <div class="product-name">${veg.name}</div>
         <div class="product-name-telugu">${veg.telugu}</div>
@@ -87,37 +72,51 @@ function renderProductGrid(vegArray) {
     `;
   });
   gridContainer.innerHTML = cardsHTML;
-  
-  // Re-attach quantity event listeners after re-render
-  setupQuantityValidations();
-  // Also re-trigger bill update in case any previous quantities exist
-  updateBillSummary(getSelectedItems());
 }
 
-// Search/filter logic
+// Search/filter by toggling card visibility (no re-render)
 function setupSearchAndFilter() {
   const searchInput = document.getElementById('searchInput');
   const clearBtn = document.getElementById('clearSearch');
-  
+  const noResultsDiv = document.getElementById('noResultsMessage');
+  const resultCountSpan = document.getElementById('searchResultCount');
+
   if (!searchInput) return;
-  
+
   const filterVegetables = () => {
     const query = searchInput.value.trim().toLowerCase();
-    if (query === '') {
-      currentFilteredVegs = [...vegetables];
-      if (clearBtn) clearBtn.style.display = 'none';
-    } else {
-      if (clearBtn) clearBtn.style.display = 'block';
-      currentFilteredVegs = vegetables.filter(veg => 
-        veg.name.toLowerCase().includes(query) || 
-        veg.telugu.toLowerCase().includes(query)
-      );
+    const cards = document.querySelectorAll('.product-card');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const name = card.getAttribute('data-veg-name');
+      const telugu = card.getAttribute('data-veg-telugu');
+      if (query === '' || name.includes(query) || telugu.includes(query)) {
+        card.style.display = '';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (clearBtn) {
+      clearBtn.style.display = query === '' ? 'none' : 'block';
     }
-    renderProductGrid(currentFilteredVegs);
+
+    if (noResultsDiv) {
+      noResultsDiv.style.display = visibleCount === 0 && query !== '' ? 'block' : 'none';
+    }
+    if (resultCountSpan) {
+      if (query === '') {
+        resultCountSpan.textContent = '';
+      } else {
+        resultCountSpan.textContent = `Found ${visibleCount} vegetable${visibleCount !== 1 ? 's' : ''}`;
+      }
+    }
   };
-  
+
   searchInput.addEventListener('input', filterVegetables);
-  
+
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
       searchInput.value = '';
@@ -127,10 +126,10 @@ function setupSearchAndFilter() {
   }
 }
 
-// Get selected items from currently displayed vegetables (respects filter)
+// Get selected items from ALL vegetables (unfiltered)
 function getSelectedItems() {
   const selected = [];
-  for (let veg of currentFilteredVegs) {
+  for (let veg of vegetables) {
     const inputEl = document.getElementById(`qty-${veg.id}`);
     if (inputEl) {
       let qty = parseFloat(inputEl.value);
@@ -156,12 +155,12 @@ function updateBillSummary(selectedItems) {
   const billSection = document.getElementById('billSummary');
   const billDetailsDiv = document.getElementById('billDetails');
   const totalAmountSpan = document.getElementById('totalAmount');
-  
+
   if (selectedItems.length === 0) {
     billSection.style.display = 'none';
     return;
   }
-  
+
   let billHTML = '';
   let grandTotal = 0;
   selectedItems.forEach(item => {
@@ -228,12 +227,11 @@ function handleOrder() {
   showSuccessPopup();
 }
 
-// Quantity validation + realtime bill for all vegetables (including filtered)
+// Quantity validation + realtime bill
 function setupQuantityValidations() {
   vegetables.forEach(veg => {
     const input = document.getElementById(`qty-${veg.id}`);
     if (input) {
-      // Remove existing listeners to avoid duplicates (optional, safe to keep)
       const updateEvent = () => {
         let val = parseFloat(input.value);
         if (isNaN(val)) input.value = 0;
@@ -242,6 +240,7 @@ function setupQuantityValidations() {
         const newSelected = getSelectedItems();
         updateBillSummary(newSelected);
       };
+      // Remove any previous listener to avoid duplicates
       input.removeEventListener('change', updateEvent);
       input.removeEventListener('input', updateEvent);
       input.addEventListener('change', updateEvent);
