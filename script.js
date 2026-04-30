@@ -240,7 +240,6 @@ function setupQuantityValidations() {
         const newSelected = getSelectedItems();
         updateBillSummary(newSelected);
       };
-      // Remove any previous listener to avoid duplicates
       input.removeEventListener('change', updateEvent);
       input.removeEventListener('input', updateEvent);
       input.addEventListener('change', updateEvent);
