@@ -1,18 +1,40 @@
 // script.js
 
 let vegetables = []; // Will be populated from JSON
+let currentFilteredVegs = [];
 
 const WHATSAPP_NUMBER = '918367645999';
 
-// Fallback data in case JSON fails to load
+// Fallback data in case JSON fails to load (complete list)
 const fallbackVegetables = [
   { id: 'tomato', name: 'Tomato', telugu: 'టమోటా', price: 40, emoji: '🍅', unit: 'kg' },
   { id: 'potato', name: 'Potato', telugu: 'ఆలుగడ్డ', price: 35, emoji: '🥔', unit: 'kg' },
   { id: 'onion', name: 'Onion', telugu: 'ఉల్లిపాయ', price: 30, emoji: '🧅', unit: 'kg' },
-  // ... include all fallback items from previous version for safety
+  { id: 'okra', name: 'Ladies Finger', telugu: 'బెండకాయ', price: 50, emoji: '🌱', unit: 'kg' },
+  { id: 'carrot', name: 'Carrot', telugu: 'క్యారెట్', price: 45, emoji: '🥕', unit: 'kg' },
+  { id: 'cucumber', name: 'Cucumber', telugu: 'దోసకాయ', price: 30, emoji: '🥒', unit: 'kg' },
+  { id: 'bell_pepper', name: 'Bell Pepper', telugu: 'క్యాప్సికమ్', price: 70, emoji: '🫑', unit: 'kg' },
+  { id: 'broccoli', name: 'Broccoli', telugu: 'బ్రోకలీ', price: 90, emoji: '🥦', unit: 'kg' },
+  { id: 'cauliflower', name: 'Cauliflower', telugu: 'గోబీ', price: 40, emoji: '🥦', unit: 'kg' },
+  { id: 'spinach', name: 'Spinach', telugu: 'పాలకూర', price: 25, emoji: '🥬', unit: 'bunch' },
+  { id: 'cabbage', name: 'Cabbage', telugu: 'క్యాబేజీ', price: 25, emoji: '🥬', unit: 'kg' },
+  { id: 'eggplant', name: 'Brinjal', telugu: 'వంకాయ', price: 35, emoji: '🍆', unit: 'kg' },
+  { id: 'radish', name: 'Radish', telugu: 'ముల్లంగి', price: 28, emoji: '🥕', unit: 'kg' },
+  { id: 'pumpkin', name: 'Pumpkin', telugu: 'గుమ్మడికాయ', price: 30, emoji: '🎃', unit: 'kg' },
+  { id: 'zucchini', name: 'Zucchini', telugu: 'జుచ్చిని', price: 65, emoji: '🥒', unit: 'kg' },
+  { id: 'green_beans', name: 'Green Beans', telugu: 'బీన్స్', price: 55, emoji: '🫘', unit: 'kg' },
+  { id: 'corn', name: 'Sweet Corn', telugu: 'మొక్కజొన్న', price: 40, emoji: '🌽', unit: 'kg' },
+  { id: 'garlic', name: 'Garlic', telugu: 'వెల్లుల్లి', price: 120, emoji: '🧄', unit: 'kg' },
+  { id: 'ginger', name: 'Ginger', telugu: 'అల్లం', price: 110, emoji: '🫚', unit: 'kg' },
+  { id: 'asparagus', name: 'Asparagus', telugu: 'ఆస్పరాగస్', price: 150, emoji: '🌿', unit: 'bundle' },
+  { id: 'leek', name: 'Leek', telugu: 'లీక్', price: 80, emoji: '🧅', unit: 'kg' },
+  { id: 'celery', name: 'Celery', telugu: 'సెలరీ', price: 70, emoji: '🥬', unit: 'kg' },
+  { id: 'kale', name: 'Kale', telugu: 'కాలే', price: 95, emoji: '🥬', unit: 'kg' },
+  { id: 'beetroot', name: 'Beetroot', telugu: 'బీట్రూట్', price: 45, emoji: '🟣', unit: 'kg' },
+  { id: 'turnip', name: 'Turnip', telugu: 'టర్నిప్', price: 38, emoji: '🥕', unit: 'kg' }
 ];
 
-// Load vegetable data from JSON file
+// Load vegetable data from JSON
 async function loadVegetables() {
   try {
     const response = await fetch('vegetables.json');
@@ -24,18 +46,33 @@ async function loadVegetables() {
     console.warn('⚠️ Could not load vegetables.json, using fallback data', error);
     vegetables = fallbackVegetables;
   }
-  // After loading, render the page
-  renderProductGrid();
+  currentFilteredVegs = [...vegetables];
+  renderProductGrid(currentFilteredVegs);
   setupQuantityValidations();
   updateBillSummary(getSelectedItems());
+  setupSearchAndFilter();
 }
 
-// Render cards (same as before, but now uses global `vegetables`)
-function renderProductGrid() {
+// Render cards based on filtered vegetables
+function renderProductGrid(vegArray) {
   const gridContainer = document.getElementById('productGrid');
+  const noResultsDiv = document.getElementById('noResultsMessage');
+  const resultCountSpan = document.getElementById('searchResultCount');
+  
   if (!gridContainer) return;
+  
+  if (!vegArray || vegArray.length === 0) {
+    gridContainer.innerHTML = '';
+    if (noResultsDiv) noResultsDiv.style.display = 'block';
+    if (resultCountSpan) resultCountSpan.textContent = 'No vegetables found';
+    return;
+  }
+  
+  if (noResultsDiv) noResultsDiv.style.display = 'none';
+  if (resultCountSpan) resultCountSpan.textContent = `Found ${vegArray.length} vegetable${vegArray.length !== 1 ? 's' : ''}`;
+  
   let cardsHTML = '';
-  vegetables.forEach(veg => {
+  vegArray.forEach(veg => {
     cardsHTML += `
       <div class="product-card" data-veg-id="${veg.id}">
         <div class="veg-emoji">${veg.emoji}</div>
@@ -50,12 +87,50 @@ function renderProductGrid() {
     `;
   });
   gridContainer.innerHTML = cardsHTML;
+  
+  // Re-attach quantity event listeners after re-render
+  setupQuantityValidations();
+  // Also re-trigger bill update in case any previous quantities exist
+  updateBillSummary(getSelectedItems());
 }
 
-// Get selected items (uses current vegetables array)
+// Search/filter logic
+function setupSearchAndFilter() {
+  const searchInput = document.getElementById('searchInput');
+  const clearBtn = document.getElementById('clearSearch');
+  
+  if (!searchInput) return;
+  
+  const filterVegetables = () => {
+    const query = searchInput.value.trim().toLowerCase();
+    if (query === '') {
+      currentFilteredVegs = [...vegetables];
+      if (clearBtn) clearBtn.style.display = 'none';
+    } else {
+      if (clearBtn) clearBtn.style.display = 'block';
+      currentFilteredVegs = vegetables.filter(veg => 
+        veg.name.toLowerCase().includes(query) || 
+        veg.telugu.toLowerCase().includes(query)
+      );
+    }
+    renderProductGrid(currentFilteredVegs);
+  };
+  
+  searchInput.addEventListener('input', filterVegetables);
+  
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      filterVegetables();
+      searchInput.focus();
+    });
+  }
+}
+
+// Get selected items from currently displayed vegetables (respects filter)
 function getSelectedItems() {
   const selected = [];
-  for (let veg of vegetables) {
+  for (let veg of currentFilteredVegs) {
     const inputEl = document.getElementById(`qty-${veg.id}`);
     if (inputEl) {
       let qty = parseFloat(inputEl.value);
@@ -63,6 +138,7 @@ function getSelectedItems() {
       qty = Math.round(qty * 10) / 10;
       const itemTotal = qty * veg.price;
       selected.push({
+        id: veg.id,
         name: veg.name,
         telugu: veg.telugu,
         quantity: qty,
@@ -75,7 +151,7 @@ function getSelectedItems() {
   return selected;
 }
 
-// Update bill summary (unchanged)
+// Update bill summary
 function updateBillSummary(selectedItems) {
   const billSection = document.getElementById('billSummary');
   const billDetailsDiv = document.getElementById('billDetails');
@@ -104,7 +180,7 @@ function updateBillSummary(selectedItems) {
   billSection.style.display = 'block';
 }
 
-// Build WhatsApp message (unchanged)
+// Build WhatsApp message
 function buildWhatsAppMessage(customerName, customerMobile, customerAddress, selectedItems) {
   let orderLines = selectedItems.map(item => {
     let qtyDisplay = item.quantity % 1 === 0 ? item.quantity : item.quantity.toFixed(1);
@@ -115,7 +191,7 @@ function buildWhatsAppMessage(customerName, customerMobile, customerAddress, sel
   return message;
 }
 
-// Show success popup (unchanged)
+// Show success popup
 function showSuccessPopup() {
   const popup = document.getElementById('orderSuccessPopup');
   if (popup) {
@@ -132,7 +208,7 @@ function showSuccessPopup() {
   }
 }
 
-// Handle order (unchanged)
+// Handle order
 function handleOrder() {
   const customerName = document.getElementById('customerName')?.value.trim();
   const customerMobile = document.getElementById('customerMobile')?.value.trim();
@@ -152,11 +228,12 @@ function handleOrder() {
   showSuccessPopup();
 }
 
-// Quantity validation + realtime bill
+// Quantity validation + realtime bill for all vegetables (including filtered)
 function setupQuantityValidations() {
   vegetables.forEach(veg => {
     const input = document.getElementById(`qty-${veg.id}`);
     if (input) {
+      // Remove existing listeners to avoid duplicates (optional, safe to keep)
       const updateEvent = () => {
         let val = parseFloat(input.value);
         if (isNaN(val)) input.value = 0;
@@ -165,15 +242,17 @@ function setupQuantityValidations() {
         const newSelected = getSelectedItems();
         updateBillSummary(newSelected);
       };
+      input.removeEventListener('change', updateEvent);
+      input.removeEventListener('input', updateEvent);
       input.addEventListener('change', updateEvent);
       input.addEventListener('input', updateEvent);
     }
   });
 }
 
-// Initialize: load vegetables first, then set up event listeners
+// Initialization
 async function init() {
-  await loadVegetables(); // this calls render, validations, etc.
+  await loadVegetables();
   const orderBtn = document.getElementById('orderWhatsAppBtn');
   if (orderBtn) orderBtn.addEventListener('click', handleOrder);
 }
