@@ -1,64 +1,108 @@
-// script.js - FIXED search & bill accumulation, with better quantity placeholders
+// script.js - Tabbed Interface, Cart, Global Search, Order Modal
 
 let vegetables = [];
-let allProductCards = [];
+let cart = []; // each item: { id, name, telugu, quantity, unit, price, total }
+let activeTab = '';
+let currentSearchQuery = '';
+
 const WHATSAPP_NUMBER = '918367645999';
 
+// Load vegetables from JSON
 async function loadVegetables() {
   try {
     const response = await fetch('vegetables.json');
     if (!response.ok) throw new Error();
     const data = await response.json();
     vegetables = data.vegetables;
-    console.log('✅ Loaded vegetables.json');
   } catch (error) {
-    console.warn('⚠️ Using fallback data');
+    console.warn('Using fallback data');
     vegetables = getFallbackVegetables();
   }
-  renderCategories();
-  setupQuantityValidations();
-  updateBillSummary();
-  setupSearchAndFilter();
+  buildTabsAndPanels();
+  attachSearch();
 }
 
-function renderCategories() {
-  const container = document.getElementById('categoriesContainer');
-  if (!container) return;
+function getFallbackVegetables() {
+  return [
+    { id: 'tomato', name: 'Tomato', telugu: 'టమోటా', price: 40, emoji: '🍅', unit: 'kg', category: 'Fruit Vegetables' },
+    { id: 'onion', name: 'Onion', telugu: 'ఉల్లిపాయ', price: 30, emoji: '🧅', unit: 'kg', category: 'Bulb Vegetables' },
+    { id: 'potato', name: 'Potato', telugu: 'ఆలుగడ్డ', price: 35, emoji: '🥔', unit: 'kg', category: 'Root Vegetables' }
+  ];
+}
 
-  const grouped = {};
+// Group vegetables by category
+function getCategories() {
+  const cats = {};
   vegetables.forEach(veg => {
-    if (!grouped[veg.category]) grouped[veg.category] = [];
-    grouped[veg.category].push(veg);
+    if (!cats[veg.category]) cats[veg.category] = [];
+    cats[veg.category].push(veg);
+  });
+  return cats;
+}
+
+// Build tabs and content panels
+function buildTabsAndPanels() {
+  const categories = getCategories();
+  const tabNav = document.getElementById('tabsNav');
+  const tabsContent = document.getElementById('tabsContent');
+  if (!tabNav || !tabsContent) return;
+
+  tabNav.innerHTML = '';
+  tabsContent.innerHTML = '';
+
+  const categoryNames = Object.keys(categories);
+  if (categoryNames.length === 0) return;
+
+  // Build tabs
+  categoryNames.forEach((cat, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'tab-btn';
+    if (idx === 0) btn.classList.add('active');
+    btn.setAttribute('data-category', cat);
+    btn.innerHTML = getCategoryEmoji(cat) + ' ' + cat;
+    btn.onclick = () => switchTab(cat);
+    tabNav.appendChild(btn);
   });
 
-  let html = '';
-  for (const [catName, items] of Object.entries(grouped)) {
-    html += `
-      <div class="category-section" data-category="${catName}">
-        <div class="category-header">
-          <span class="category-emoji">${getCategoryEmoji(catName)}</span>
-          <h3 class="category-title">${catName}</h3>
-          <span class="category-sub">${items.length} items</span>
-        </div>
-        <div class="product-grid">
-          ${items.map(veg => `
-            <div class="product-card" data-veg-id="${veg.id}" data-veg-name="${veg.name.toLowerCase()}" data-veg-telugu="${veg.telugu.toLowerCase()}" data-category="${catName}">
-              <div class="veg-emoji">${veg.emoji}</div>
-              <div class="product-name">${veg.name}</div>
-              <div class="product-name-telugu">${veg.telugu}</div>
-              <div class="product-price">₹${veg.price} <span class="price-unit">/ ${veg.unit}</span></div>
-              <div class="quantity-control">
-                <label for="qty-${veg.id}">Quantity (${veg.unit})</label>
-                <input type="number" id="qty-${veg.id}" class="quantity-input" min="0" step="0.5" placeholder="e.g., 1 ${veg.unit}" value="">
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
+  // Build panels
+  categoryNames.forEach(cat => {
+    const panel = document.createElement('div');
+    panel.className = 'tab-panel';
+    panel.id = `panel-${cat.replace(/[^a-zA-Z0-9]/g, '')}`;
+    panel.setAttribute('data-category', cat);
+    panel.innerHTML = renderCategoryPanel(cat, categories[cat]);
+    tabsContent.appendChild(panel);
+  });
+
+  // Activate first tab
+  if (categoryNames.length > 0) {
+    activeTab = categoryNames[0];
+    document.querySelector(`.tab-panel[data-category="${activeTab}"]`).classList.add('active-panel');
   }
-  container.innerHTML = html;
-  allProductCards = Array.from(document.querySelectorAll('.product-card'));
+}
+
+function renderCategoryPanel(category, vegs) {
+  return `
+    <div class="category-header">
+      <span class="category-emoji">${getCategoryEmoji(category)}</span>
+      <h3 class="category-title">${category}</h3>
+      <span class="category-sub">${vegs.length} items</span>
+    </div>
+    <div class="product-grid">
+      ${vegs.map(veg => `
+        <div class="product-card" data-veg-id="${veg.id}" data-veg-name="${veg.name.toLowerCase()}" data-veg-telugu="${veg.telugu.toLowerCase()}">
+          <div class="veg-emoji">${veg.emoji}</div>
+          <div class="product-name">${veg.name}</div>
+          <div class="product-name-telugu">${veg.telugu}</div>
+          <div class="product-price">₹${veg.price} <span style="font-size:0.7rem;">/ ${veg.unit}</span></div>
+          <div class="quantity-control">
+            <input type="number" class="quantity-input" id="qty-${veg.id}" min="0" step="0.5" placeholder="Qty" value="">
+            <button class="add-to-cart-btn" data-id="${veg.id}" data-name="${veg.name}" data-telugu="${veg.telugu}" data-price="${veg.price}" data-unit="${veg.unit}">+ Add</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 function getCategoryEmoji(cat) {
@@ -70,151 +114,249 @@ function getCategoryEmoji(cat) {
   return map[cat] || '🥗';
 }
 
-function setupSearchAndFilter() {
+function switchTab(category) {
+  activeTab = category;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    if (btn.getAttribute('data-category') === category) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  document.querySelectorAll('.tab-panel').forEach(panel => {
+    if (panel.getAttribute('data-category') === category) {
+      panel.classList.add('active-panel');
+    } else {
+      panel.classList.remove('active-panel');
+    }
+  });
+  // Reapply search filter if any
+  if (currentSearchQuery) {
+    filterVegetables(currentSearchQuery);
+  }
+}
+
+// Global Search
+function attachSearch() {
   const searchInput = document.getElementById('searchInput');
   const clearBtn = document.getElementById('clearSearch');
-  const noResultsDiv = document.getElementById('noResultsMessage');
-  const resultCountSpan = document.getElementById('searchResultCount');
+  if (!searchInput) return;
 
-  const filter = () => {
+  const handleSearch = () => {
     const query = searchInput.value.trim().toLowerCase();
-    let visibleCount = 0;
-    allProductCards.forEach(card => {
-      const name = card.getAttribute('data-veg-name');
-      const telugu = card.getAttribute('data-veg-telugu');
-      const match = query === '' || name.includes(query) || telugu.includes(query);
-      card.style.display = match ? '' : 'none';
-      if (match) visibleCount++;
-    });
-    document.querySelectorAll('.category-section').forEach(section => {
-      const visibleCards = Array.from(section.querySelectorAll('.product-card')).filter(
-        card => card.style.display !== 'none'
-      );
-      section.style.display = visibleCards.length === 0 && query !== '' ? 'none' : '';
-    });
-    clearBtn.style.display = query === '' ? 'none' : 'block';
-    noResultsDiv.style.display = visibleCount === 0 && query !== '' ? 'block' : 'none';
-    resultCountSpan.textContent = query === '' ? '' : `Found ${visibleCount} vegetable${visibleCount !== 1 ? 's' : ''}`;
+    currentSearchQuery = query;
+    filterVegetables(query);
+    clearBtn.style.display = query ? 'block' : 'none';
   };
-  searchInput.addEventListener('input', filter);
+
+  searchInput.addEventListener('input', handleSearch);
   clearBtn.addEventListener('click', () => {
     searchInput.value = '';
-    filter();
+    handleSearch();
     searchInput.focus();
   });
 }
 
-function getSelectedItems() {
-  const selected = [];
-  for (let veg of vegetables) {
-    const input = document.getElementById(`qty-${veg.id}`);
-    if (input) {
-      let qty = parseFloat(input.value);
-      // If input is empty or not a number, treat as 0
-      if (isNaN(qty)) qty = 0;
-      if (qty <= 0) continue;
-      qty = Math.round(qty * 10) / 10;
-      selected.push({
-        id: veg.id,
-        name: veg.name,
-        telugu: veg.telugu,
-        quantity: qty,
-        unit: veg.unit,
-        total: qty * veg.price
-      });
+function filterVegetables(query) {
+  const noResultsDiv = document.getElementById('noResultsMessage');
+  let anyVisible = false;
+
+  // Loop through all product cards in the active tab only (or all tabs? We'll filter globally but show only in active tab)
+  // Simpler: hide/show cards inside each panel separately, but we'll just hide panels if all cards hidden
+  document.querySelectorAll('.tab-panel').forEach(panel => {
+    const cards = panel.querySelectorAll('.product-card');
+    let panelHasVisible = false;
+    cards.forEach(card => {
+      const name = card.getAttribute('data-veg-name');
+      const telugu = card.getAttribute('data-veg-telugu');
+      const match = query === '' || name.includes(query) || telugu.includes(query);
+      card.style.display = match ? '' : 'none';
+      if (match) panelHasVisible = true;
+    });
+    // Hide the whole panel if no visible cards
+    if (query !== '' && !panelHasVisible) {
+      panel.style.display = 'none';
+    } else if (query === '') {
+      panel.style.display = '';
+    } else {
+      panel.style.display = '';
     }
-  }
-  return selected;
+    if (panelHasVisible || query === '') anyVisible = true;
+  });
+
+  // Also hide tabs that have no visible content? optional
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const cat = btn.getAttribute('data-category');
+    const panel = document.querySelector(`.tab-panel[data-category="${cat}"]`);
+    if (panel && query !== '') {
+      const hasVisible = panel.querySelector('.product-card[style=""]:not([style="display: none;"])');
+      btn.style.display = hasVisible ? '' : 'none';
+    } else {
+      btn.style.display = '';
+    }
+  });
+
+  noResultsDiv.style.display = (!anyVisible && query !== '') ? 'block' : 'none';
 }
 
-function updateBillSummary() {
-  const selected = getSelectedItems();
-  const billSection = document.getElementById('billSummary');
-  const detailsDiv = document.getElementById('billDetails');
-  const totalSpan = document.getElementById('totalAmount');
+// Cart Logic
+function updateCartUI() {
+  const cartContainer = document.getElementById('cartItems');
+  const cartCountSpan = document.getElementById('cartCount');
+  const cartTotalSpan = document.getElementById('cartTotal');
+  if (!cartContainer) return;
 
-  if (selected.length === 0) {
-    billSection.style.display = 'none';
+  if (cart.length === 0) {
+    cartContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Cart is empty</div>';
+    cartCountSpan.innerText = '0';
+    cartTotalSpan.innerText = '₹0';
     return;
   }
 
   let html = '';
-  let grandTotal = 0;
-  selected.forEach(item => {
-    grandTotal += item.total;
-    const qtyDisplay = item.quantity % 1 === 0 ? item.quantity : item.quantity.toFixed(1);
+  let total = 0;
+  cart.forEach((item, idx) => {
+    total += item.total;
     html += `
-      <div class="bill-item">
-        <span>${item.name} (${item.telugu}) - ${qtyDisplay} ${item.unit}</span>
-        <span>₹${item.total.toFixed(2)}</span>
+      <div class="cart-item" data-cart-idx="${idx}">
+        <div class="cart-item-details">
+          <div class="cart-item-name">${item.name} (${item.telugu})</div>
+          <div class="cart-item-unit">${item.quantity} ${item.unit} @ ₹${item.price}/${item.unit}</div>
+        </div>
+        <div class="cart-item-price">₹${item.total.toFixed(2)}</div>
+        <button class="cart-item-remove" data-id="${item.id}">🗑️</button>
       </div>
     `;
   });
-  detailsDiv.innerHTML = html;
-  totalSpan.innerHTML = `Total: ₹${grandTotal.toFixed(2)}`;
-  billSection.style.display = 'block';
+  cartContainer.innerHTML = html;
+  cartCountSpan.innerText = cart.length;
+  cartTotalSpan.innerText = `₹${total.toFixed(2)}`;
+
+  // Remove buttons
+  document.querySelectorAll('.cart-item-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const id = btn.getAttribute('data-id');
+      removeFromCart(id);
+    });
+  });
 }
 
-function setupQuantityValidations() {
-  vegetables.forEach(veg => {
-    const input = document.getElementById(`qty-${veg.id}`);
-    if (input) {
-      const handler = () => {
-        let val = parseFloat(input.value);
-        if (isNaN(val)) input.value = '';
-        else if (val < 0) input.value = '';
-        else if (val > 20) input.value = 20;
-        updateBillSummary();
-      };
-      input.removeEventListener('change', handler);
-      input.removeEventListener('input', handler);
-      input.addEventListener('change', handler);
-      input.addEventListener('input', handler);
+function addToCart(vegId, name, telugu, price, unit) {
+  const qtyInput = document.getElementById(`qty-${vegId}`);
+  let quantity = parseFloat(qtyInput.value);
+  if (isNaN(quantity) || quantity <= 0) {
+    alert('Please enter a valid quantity');
+    return;
+  }
+  quantity = Math.round(quantity * 10) / 10;
+  const total = quantity * price;
+  // Check if already in cart
+  const existing = cart.find(item => item.id === vegId);
+  if (existing) {
+    existing.quantity += quantity;
+    existing.total = existing.quantity * existing.price;
+  } else {
+    cart.push({
+      id: vegId,
+      name: name,
+      telugu: telugu,
+      quantity: quantity,
+      unit: unit,
+      price: price,
+      total: total
+    });
+  }
+  updateCartUI();
+  // Clear the quantity input after adding
+  qtyInput.value = '';
+  // Show small feedback (optional)
+  showAddToCartMessage(name);
+}
+
+function showAddToCartMessage(name) {
+  // optional: a small floating message, but we can just rely on cart update
+  console.log(`${name} added to cart`);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  updateCartUI();
+}
+
+// Event delegation for Add to Cart buttons
+function attachAddToCartListeners() {
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('add-to-cart-btn')) {
+      const btn = e.target;
+      const id = btn.getAttribute('data-id');
+      const name = btn.getAttribute('data-name');
+      const telugu = btn.getAttribute('data-telugu');
+      const price = parseFloat(btn.getAttribute('data-price'));
+      const unit = btn.getAttribute('data-unit');
+      addToCart(id, name, telugu, price, unit);
     }
   });
 }
 
-function buildWhatsAppMessage(name, mobile, address, items) {
-  let lines = items.map(i => `${i.name} (${i.telugu}): ${i.quantity} ${i.unit}  ₹${i.total.toFixed(2)}`).join('\n');
-  const total = items.reduce((s, i) => s + i.total, 0).toFixed(2);
-  return `🛒 *SREE VEG MART - New Order*\n\n${lines}\n\n💰 *Total Amount: ₹${total}* (Cash on Delivery)\n\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n🏠 Address: ${address}\n\n✅ Order will be confirmed on WhatsApp. Only COD.`;
+// Order flow
+function proceedToOrder() {
+  if (cart.length === 0) {
+    alert('Your cart is empty. Add some vegetables first.');
+    return;
+  }
+  const modal = document.getElementById('orderModal');
+  modal.style.display = 'flex';
+}
+
+function confirmOrder() {
+  const name = document.getElementById('modalName').value.trim();
+  const mobile = document.getElementById('modalMobile').value.trim();
+  const address = document.getElementById('modalAddress').value.trim();
+
+  if (!name) { alert('Please enter your name'); return; }
+  if (!mobile || !/^[0-9]{10}$/.test(mobile)) { alert('Please enter a valid 10-digit mobile number'); return; }
+  if (!address) { alert('Please enter your delivery address'); return; }
+
+  // Build WhatsApp message
+  let orderLines = cart.map(item => `${item.name} (${item.telugu}): ${item.quantity} ${item.unit}  ₹${item.total.toFixed(2)}`).join('\n');
+  const totalBill = cart.reduce((sum, i) => sum + i.total, 0).toFixed(2);
+  const message = `🛒 *SREE VEG MART - New Order*\n\n${orderLines}\n\n💰 *Total Amount: ₹${totalBill}* (Cash on Delivery)\n\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n🏠 Address: ${address}\n\n✅ Order will be confirmed on WhatsApp. Only COD.`;
+
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
+
+  // Close modal
+  document.getElementById('orderModal').style.display = 'none';
+  // Show success popup
+  showSuccessPopup();
+  // Optional: clear cart after order
+  cart = [];
+  updateCartUI();
 }
 
 function showSuccessPopup() {
   const popup = document.getElementById('orderSuccessPopup');
   popup.style.display = 'flex';
-  document.getElementById('closePopupBtn').onclick = () => popup.style.display = 'none';
+  const closeBtn = document.getElementById('closePopupBtn');
+  closeBtn.onclick = () => popup.style.display = 'none';
   popup.onclick = (e) => { if (e.target === popup) popup.style.display = 'none'; };
 }
 
-function handleOrder() {
-  const name = document.getElementById('customerName')?.value.trim();
-  const mobile = document.getElementById('customerMobile')?.value.trim();
-  const addr = document.getElementById('deliveryAddress')?.value.trim();
-  const items = getSelectedItems();
-
-  if (!name) { alert('❌ Please enter your full name.'); return; }
-  if (!mobile || !/^[0-9]{10}$/.test(mobile)) { alert('📱 Please enter a valid 10-digit mobile number.'); return; }
-  if (!addr) { alert('📍 Please enter your delivery address.'); return; }
-  if (items.length === 0) { alert('🛒 Add at least one vegetable with quantity > 0 before ordering.'); return; }
-
-  const message = buildWhatsAppMessage(name, mobile, addr, items);
-  const encoded = encodeURIComponent(message);
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
-  showSuccessPopup();
-}
-
-function getFallbackVegetables() {
-  return [
-    { id: 'tomato', name: 'Tomato', telugu: 'టమోటా', price: 40, emoji: '🍅', unit: 'kg', category: 'Fruit Vegetables' },
-    { id: 'potato', name: 'Potato', telugu: 'ఆలుగడ్డ', price: 35, emoji: '🥔', unit: 'kg', category: 'Root Vegetables' },
-    { id: 'onion', name: 'Onion', telugu: 'ఉల్లిపాయ', price: 30, emoji: '🧅', unit: 'kg', category: 'Bulb Vegetables' }
-  ];
-}
-
+// Initialize page after DOM loads
 async function init() {
   await loadVegetables();
-  document.getElementById('orderWhatsAppBtn').addEventListener('click', handleOrder);
+  attachAddToCartListeners();
+  updateCartUI();
+  // Proceed button
+  const proceedBtn = document.getElementById('proceedToOrderBtn');
+  if (proceedBtn) proceedBtn.addEventListener('click', proceedToOrder);
+  const confirmBtn = document.getElementById('confirmOrderBtn');
+  if (confirmBtn) confirmBtn.addEventListener('click', confirmOrder);
+  // Close modal
+  const modal = document.getElementById('orderModal');
+  const closeModal = document.querySelector('.close-modal');
+  if (closeModal) closeModal.onclick = () => modal.style.display = 'none';
+  window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
 }
 
 document.addEventListener('DOMContentLoaded', init);
