@@ -1,4 +1,4 @@
-/* style.css - Modern Grocery App UI */
+/* style.css - Modern Grocery App UI with Mobile Fixes */
 * {
   margin: 0;
   padding: 0;
@@ -191,13 +191,13 @@ body {
 }
 .tabs-nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
-  border-bottom: 1px solid var(--border-light);
-  padding-bottom: 8px;
   overflow-x: auto;
   white-space: nowrap;
   scrollbar-width: thin;
+  padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
 }
 .tab-btn {
   background: none;
@@ -212,6 +212,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 .tab-btn.active {
   background: var(--primary-green);
@@ -260,7 +261,6 @@ body {
   transition: all 0.2s;
   box-shadow: var(--card-shadow);
   border: 1px solid var(--border-light);
-  position: relative;
 }
 .product-card:hover {
   transform: translateY(-2px);
@@ -297,7 +297,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 .quantity-input {
   width: 70px;
@@ -326,7 +326,7 @@ body {
   transform: scale(0.96);
 }
 
-/* Cart Panel */
+/* ===== CART PANEL – Responsive Fixes ===== */
 .cart-panel {
   position: fixed;
   bottom: 20px;
@@ -528,18 +528,45 @@ body {
   margin-top: 60px;
 }
 
-/* Responsive */
+/* ===== MOBILE RESPONSIVE FIXES ===== */
 @media (max-width: 768px) {
-  .cart-panel {
-    width: 300px;
-    bottom: 10px;
-    right: 10px;
-  }
   .product-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   }
   .tab-btn {
     padding: 6px 14px;
     font-size: 0.8rem;
+  }
+  /* Cart panel: full width at bottom, no overlap */
+  .cart-panel {
+    width: calc(100% - 20px);
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    max-height: 45vh;
+    overflow-y: auto;
+  }
+  .cart-items {
+    max-height: 200px;
+  }
+  /* Add bottom padding to main content so last items aren't hidden behind cart */
+  .main-content {
+    padding-bottom: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  .product-name {
+    font-size: 0.95rem;
+  }
+  .quantity-control {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .add-to-cart-btn {
+    justify-content: center;
   }
 }
