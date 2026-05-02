@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  
   <title>SREE VEG MART | Fresh Vegetables Online - Kakinada</title>
   <meta name="description" content="Order fresh vegetables online from SREE VEG MART. Same-day delivery within 20 km of Kakinada. 60+ varieties.">
   <meta name="keywords" content="vegetable shop online, fresh vegetables delivery Kakinada, buy vegetables near me, tomato price, potato, onion, okra, local grocery Kakinada, WhatsApp order vegetables, Sree Veg Mart, leafy vegetables, root vegetables">
@@ -55,45 +54,50 @@
       </div>
     </header>
 
-    <main class="container main-content">
-      <!-- Delivery Zone Banner -->
-      <div class="delivery-zone">
-        <div class="delivery-card">
-          <div class="bike-animation"><div class="bike"></div></div>
-          <div class="delivery-info">
-            <div class="radius-board">
-              <span class="radius-badge">🎯 20 KM DELIVERY ZONE</span>
-              <h2 class="city-name">KAKINADA</h2>
-              <p class="zone-desc">We deliver fresh vegetables only within <strong>20 km radius</strong> from Kakinada city center.</p>
+    <main class="main-content">
+      <div class="container two-column-layout">
+        <!-- LEFT COLUMN: Delivery Zone, Tabs + Products -->
+        <div class="products-area">
+          <!-- Delivery Banner -->
+          <div class="delivery-zone">
+            <div class="delivery-card">
+              <div class="bike-animation"><div class="bike"></div></div>
+              <div class="delivery-info">
+                <div class="radius-board">
+                  <span class="radius-badge">🎯 20 KM DELIVERY ZONE</span>
+                  <h2 class="city-name">KAKINADA</h2>
+                  <p class="zone-desc">We deliver fresh vegetables only within <strong>20 km radius</strong> from Kakinada city center.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabs Container -->
+          <div class="tabs-container">
+            <div class="tabs-nav" id="tabsNav"></div>
+            <div id="noResultsMessage" class="no-results" style="display: none;">😕 No vegetables match your search. Try a different keyword.</div>
+          </div>
+          <div id="tabsContent"></div>
+        </div>
+
+        <!-- RIGHT COLUMN: CART (Sticky Sidebar) -->
+        <div class="cart-sidebar">
+          <div class="cart-panel">
+            <div class="cart-header">
+              <h3>🛒 Your Cart</h3>
+              <span id="cartCount" class="cart-count">0</span>
+            </div>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-footer">
+              <div class="cart-total">Total: <span id="cartTotal">₹0</span></div>
+              <button id="proceedToOrderBtn" class="proceed-btn">Proceed to Order</button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- Tabs Navigation -->
-      <div class="tabs-container">
-        <div class="tabs-nav" id="tabsNav"></div>
-        <div id="noResultsMessage" class="no-results" style="display: none;">😕 No vegetables match your search. Try a different keyword.</div>
-      </div>
-
-      <!-- Tab Content Panels -->
-      <div id="tabsContent"></div>
-
-      <!-- Shopping Cart Panel -->
-      <div class="cart-panel" id="cartPanel">
-        <div class="cart-header">
-          <h3>🛒 Your Cart</h3>
-          <span id="cartCount" class="cart-count">0</span>
-        </div>
-        <div id="cartItems" class="cart-items"></div>
-        <div class="cart-footer">
-          <div class="cart-total">Total: <span id="cartTotal">₹0</span></div>
-          <button id="proceedToOrderBtn" class="proceed-btn">Proceed to Order</button>
-        </div>
-      </div>
     </main>
 
-    <!-- Order Modal (Customer Details) -->
+    <!-- Order Modal -->
     <div id="orderModal" class="modal">
       <div class="modal-content">
         <span class="close-modal">&times;</span>
@@ -133,7 +137,6 @@
       </div>
     </footer>
   </div>
-
   <script src="script.js"></script>
 </body>
 </html>
