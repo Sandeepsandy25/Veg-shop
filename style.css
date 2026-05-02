@@ -1,4 +1,4 @@
-/* style.css - Modern Grocery App UI with Mobile Fixes */
+/* style.css - Modern Grocery App UI with Glassmorphism & Mobile Fix */
 * {
   margin: 0;
   padding: 0;
@@ -253,6 +253,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
+  margin-bottom: 30px;
 }
 .product-card {
   background: white;
@@ -326,27 +327,31 @@ body {
   transform: scale(0.96);
 }
 
-/* ===== CART PANEL – Responsive Fixes ===== */
+/* ===== CART PANEL – GLASS EFFECT & MOBILE OPTIMIZED ===== */
 .cart-panel {
   position: fixed;
   bottom: 20px;
   right: 20px;
   width: 340px;
-  background: white;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   z-index: 100;
-  transition: transform 0.3s;
-  border: 1px solid var(--border-light);
+  border: 1px solid rgba(46, 125, 50, 0.2);
+  transition: all 0.3s ease;
 }
+
 .cart-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 14px 18px;
-  background: var(--primary-green);
+  background: rgba(46, 125, 50, 0.9);
+  backdrop-filter: blur(4px);
   color: white;
-  border-radius: 20px 20px 0 0;
+  border-radius: 24px 24px 0 0;
   font-weight: 600;
 }
 .cart-count {
@@ -366,7 +371,7 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
   font-size: 0.85rem;
 }
 .cart-item-details {
@@ -389,10 +394,11 @@ body {
   cursor: pointer;
   font-size: 1.2rem;
   margin-left: 10px;
+  opacity: 0.7;
 }
 .cart-footer {
   padding: 12px 16px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid rgba(0,0,0,0.05);
 }
 .cart-total {
   font-size: 1.1rem;
@@ -424,12 +430,14 @@ body {
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 .modal-content {
-  background: white;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(8px);
   border-radius: 24px;
   width: 90%;
   max-width: 450px;
@@ -457,6 +465,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 12px;
   font-family: inherit;
+  background: white;
 }
 .confirm-order-btn {
   width: 100%;
@@ -478,6 +487,7 @@ body {
   top: 0; left: 0;
   width: 100%; height: 100%;
   background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
   justify-content: center;
   align-items: center;
   z-index: 1100;
@@ -537,7 +547,8 @@ body {
     padding: 6px 14px;
     font-size: 0.8rem;
   }
-  /* Cart panel: full width at bottom, no overlap */
+  
+  /* Cart panel: full width at bottom, glass effect */
   .cart-panel {
     width: calc(100% - 20px);
     left: 10px;
@@ -545,13 +556,16 @@ body {
     bottom: 10px;
     max-height: 45vh;
     overflow-y: auto;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
   }
   .cart-items {
-    max-height: 200px;
+    max-height: 180px;
   }
-  /* Add bottom padding to main content so last items aren't hidden behind cart */
+  
+  /* Add extra padding to main content so last items aren't hidden behind cart */
   .main-content {
-    padding-bottom: 60px;
+    padding-bottom: 80px;
   }
 }
 
@@ -568,5 +582,8 @@ body {
   }
   .add-to-cart-btn {
     justify-content: center;
+  }
+  .cart-panel {
+    max-height: 40vh;
   }
 }
