@@ -19,44 +19,16 @@
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
 
-  <!-- Favicon (generated from RealFaviconGenerator) - using relative paths -->
-  <link rel="icon" type="image/png" href="favicon-96x96.png?v=20260430" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=20260430" />
-  <link rel="shortcut icon" href="favicon.ico?v=20260430" />
-  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=20260430" />
-  <link rel="manifest" href="site.webmanifest?v=20260430" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "GroceryStore",
-    "name": "SREE VEG MART",
-    "description": "Fresh vegetable store offering home delivery within 20 km of Kakinada and WhatsApp ordering.",
-    "telephone": "+918367645999",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Kakinada",
-      "addressRegion": "Andhra Pradesh",
-      "addressCountry": "IN"
-    },
-    "openingHours": "Mo-Su 08:00-21:00",
-    "sameAs": ["https://wa.me/918367645999"],
-    "priceRange": "₹₹",
-    "areaServed": {
-      "@type": "GeoCircle",
-      "geoMidpoint": {
-        "@type": "GeoCoordinates",
-        "latitude": "16.9891",
-        "longitude": "82.2475"
-      },
-      "geoRadius": "20000"
-    }
-  }
-  </script>
 </head>
 <body>
   <div class="app-wrapper">
@@ -79,13 +51,12 @@
             <input type="text" id="searchInput" placeholder="Search vegetables (English or Telugu)..." class="search-input">
             <button id="clearSearch" class="clear-search">✖</button>
           </div>
-          <p class="search-result-count" id="searchResultCount"></p>
         </div>
       </div>
     </header>
 
     <main class="container main-content">
-      <!-- Delivery Zone -->
+      <!-- Delivery Zone Banner -->
       <div class="delivery-zone">
         <div class="delivery-card">
           <div class="bike-animation"><div class="bike"></div></div>
@@ -94,57 +65,58 @@
               <span class="radius-badge">🎯 20 KM DELIVERY ZONE</span>
               <h2 class="city-name">KAKINADA</h2>
               <p class="zone-desc">We deliver fresh vegetables only within <strong>20 km radius</strong> from Kakinada city center.</p>
-              <div class="radius-circle"></div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Dynamic Categories Will Be Injected Here -->
-      <div id="categoriesContainer"></div>
-      <div id="noResultsMessage" class="no-results" style="display: none;">😕 No vegetables match your search. Try a different keyword.</div>
+      <!-- Tabs Navigation -->
+      <div class="tabs-container">
+        <div class="tabs-nav" id="tabsNav"></div>
+        <div id="noResultsMessage" class="no-results" style="display: none;">😕 No vegetables match your search. Try a different keyword.</div>
+      </div>
 
-      <!-- Bill Summary Section (now appears right after products) -->
-      <section class="bill-summary" id="billSummary" style="display: none;">
-        <div class="bill-card">
-          <h3>🧾 Your Order Bill</h3>
-          <div id="billDetails"></div>
-          <div class="total-amount" id="totalAmount">Total: ₹0</div>
-          <p class="cod-note">💵 Payment: Cash on Delivery only</p>
-        </div>
-      </section>
+      <!-- Tab Content Panels -->
+      <div id="tabsContent"></div>
 
-      <!-- Customer Details -->
-      <section class="customer-section">
-        <div class="section-header">
-          <h2>📋 Delivery Details</h2>
-          <p class="section-sub">We need your info to send order confirmation</p>
+      <!-- Shopping Cart Panel -->
+      <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+          <h3>🛒 Your Cart</h3>
+          <span id="cartCount" class="cart-count">0</span>
         </div>
-        <div class="customer-card">
-          <div class="input-group">
-            <label for="customerName">Full name</label>
-            <input type="text" id="customerName" placeholder="e.g. Rajesh Kumar" autocomplete="name">
-          </div>
-          <div class="input-group">
-            <label for="customerMobile">Mobile number (WhatsApp)</label>
-            <input type="tel" id="customerMobile" placeholder="e.g. 9876543210" autocomplete="tel">
-          </div>
-          <div class="input-group">
-            <label for="deliveryAddress">Delivery address</label>
-            <textarea id="deliveryAddress" rows="3" placeholder="House / Flat No., Street, Landmark, City, Pincode"></textarea>
-          </div>
+        <div id="cartItems" class="cart-items"></div>
+        <div class="cart-footer">
+          <div class="cart-total">Total: <span id="cartTotal">₹0</span></div>
+          <button id="proceedToOrderBtn" class="proceed-btn">Proceed to Order</button>
         </div>
-      </section>
-
-      <div class="order-action">
-        <button id="orderWhatsAppBtn" class="whatsapp-order-btn">
-          <span>📲 Order on WhatsApp</span>
-          <span class="btn-icon">➡️</span>
-        </button>
-        <p class="secure-note">✓ Share order via WhatsApp • Freshness guaranteed</p>
       </div>
     </main>
 
+    <!-- Order Modal (Customer Details) -->
+    <div id="orderModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>📋 Delivery Details</h3>
+        <div class="modal-body">
+          <div class="input-group">
+            <label for="modalName">Full name</label>
+            <input type="text" id="modalName" placeholder="e.g. Rajesh Kumar">
+          </div>
+          <div class="input-group">
+            <label for="modalMobile">Mobile number (WhatsApp)</label>
+            <input type="tel" id="modalMobile" placeholder="e.g. 9876543210">
+          </div>
+          <div class="input-group">
+            <label for="modalAddress">Delivery address</label>
+            <textarea id="modalAddress" rows="3" placeholder="House / Flat No., Street, Landmark, City, Pincode"></textarea>
+          </div>
+          <button id="confirmOrderBtn" class="confirm-order-btn">📲 Confirm Order on WhatsApp</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Popup -->
     <div id="orderSuccessPopup" class="popup-overlay">
       <div class="popup-card">
         <div class="tick-icon">✅</div>
@@ -161,6 +133,7 @@
       </div>
     </footer>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
