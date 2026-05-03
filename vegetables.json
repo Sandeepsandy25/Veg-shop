@@ -26,6 +26,7 @@
     { "id": "garlic", "name": "Garlic", "telugu": "వెల్లుల్లి", "price": 200, "emoji": "🧄", "unit": "kg", "category": "Root Vegetables" },
     { "id": "yam", "name": "Yam", "telugu": "కంద", "price": 70, "emoji": "🍠", "unit": "kg", "category": "Root Vegetables" },
     { "id": "raw_banana_root", "name": "Raw Banana Root", "telugu": "అరటి కంద", "price": 40, "emoji": "🍌", "unit": "kg", "category": "Root Vegetables" },
+    { "id": "raw_mango", "name": "Raw Mango", "telugu": "పచ్చి మామిడి", "price": 20, "emoji": "🥭", "unit": "piece", "category": "Root Vegetables" },
 
     { "id": "cauliflower", "name": "Cauliflower", "telugu": "కాలిఫ్లవర్", "price": 50, "emoji": "🥦", "unit": "kg", "category": "Flower Vegetables" },
     { "id": "broccoli", "name": "Broccoli", "telugu": "బ్రోకలీ", "price": 90, "emoji": "🥦", "unit": "kg", "category": "Flower Vegetables" },
