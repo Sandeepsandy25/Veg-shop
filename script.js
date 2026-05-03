@@ -1,26 +1,30 @@
-// script.js - Tabbed Interface, Cart, Global Search, Order Modal
-// Added Telugu translations for categories
+// script.js - Tabbed Interface with Telugu Category Names
 
 let vegetables = [];
-let cart = []; // each item: { id, name, telugu, quantity, unit, price, total }
+let cart = [];
 let activeTab = '';
 let currentSearchQuery = '';
 
 const WHATSAPP_NUMBER = '918367645999';
 
-// Category names in English + Telugu mapping
-const categoryNames = {
-  'Leafy Vegetables': { te: 'ఆకు కూరలు', emoji: '🥬' },
-  'Root Vegetables': { te: 'మూల కూరలు', emoji: '🥕' },
-  'Flower Vegetables': { te: 'పుష్ప కూరలు', emoji: '🥦' },
-  'Fruit Vegetables': { te: 'ఫల కూరలు', emoji: '🍆' },
-  'Stem Vegetables': { te: 'కాండ కూరలు', emoji: '🌿' },
-  'Bulb Vegetables': { te: 'గడ్డ కూరలు', emoji: '🧅' },
-  'Seed / Pod Vegetables': { te: 'గింజల కూరలు', emoji: '🌶️' },
-  'Exotic / International': { te: 'అంతర్జాతీయ కూరలు', emoji: '🌍' }
+// Telugu translations for categories
+const categoryTelugu = {
+  'Leafy Vegetables': 'ఆకు కూరలు',
+  'Root Vegetables': 'మూల కూరలు',
+  'Flower Vegetables': 'పుష్ప కూరలు',
+  'Fruit Vegetables': 'ఫల కూరలు',
+  'Stem Vegetables': 'కాండ కూరలు',
+  'Bulb Vegetables': 'గడ్డ కూరలు',
+  'Seed / Pod Vegetables': 'గింజల కూరలు',
+  'Exotic / International': 'అంతర్జాతీయ కూరలు'
 };
 
-// Load vegetables from JSON
+const categoryEmoji = {
+  'Leafy Vegetables': '🥬', 'Root Vegetables': '🥕', 'Flower Vegetables': '🥦',
+  'Fruit Vegetables': '🍆', 'Stem Vegetables': '🌿', 'Bulb Vegetables': '🧅',
+  'Seed / Pod Vegetables': '🌶️', 'Exotic / International': '🌍'
+};
+
 async function loadVegetables() {
   try {
     const response = await fetch('vegetables.json');
@@ -43,7 +47,6 @@ function getFallbackVegetables() {
   ];
 }
 
-// Group vegetables by category
 function getCategories() {
   const cats = {};
   vegetables.forEach(veg => {
@@ -53,7 +56,6 @@ function getCategories() {
   return cats;
 }
 
-// Build tabs and content panels
 function buildTabsAndPanels() {
   const categories = getCategories();
   const tabNav = document.getElementById('tabsNav');
@@ -63,44 +65,44 @@ function buildTabsAndPanels() {
   tabNav.innerHTML = '';
   tabsContent.innerHTML = '';
 
-  const categoryKeys = Object.keys(categories);
-  if (categoryKeys.length === 0) return;
+  const categoryNames = Object.keys(categories);
+  if (categoryNames.length === 0) return;
 
-  // Build tabs (English + Telugu)
-  categoryKeys.forEach((cat, idx) => {
+  // Build tabs with Telugu text
+  categoryNames.forEach((cat, idx) => {
     const btn = document.createElement('button');
     btn.className = 'tab-btn';
     if (idx === 0) btn.classList.add('active');
     btn.setAttribute('data-category', cat);
-    const catInfo = categoryNames[cat] || { te: cat, emoji: '🥗' };
-    btn.innerHTML = `${catInfo.emoji} ${cat} (${catInfo.te})`;
+    const tel = categoryTelugu[cat] || cat;
+    const emoji = categoryEmoji[cat] || '🥗';
+    btn.innerHTML = `${emoji} ${cat} (${tel})`;
     btn.onclick = () => switchTab(cat);
     tabNav.appendChild(btn);
   });
 
-  // Build panels
-  categoryKeys.forEach(cat => {
+  // Build panels with Telugu in headers
+  categoryNames.forEach(cat => {
     const panel = document.createElement('div');
     panel.className = 'tab-panel';
-    panel.id = `panel-${cat.replace(/[^a-zA-Z0-9]/g, '')}`;
     panel.setAttribute('data-category', cat);
     panel.innerHTML = renderCategoryPanel(cat, categories[cat]);
     tabsContent.appendChild(panel);
   });
 
-  // Activate first tab
-  if (categoryKeys.length > 0) {
-    activeTab = categoryKeys[0];
+  if (categoryNames.length > 0) {
+    activeTab = categoryNames[0];
     document.querySelector(`.tab-panel[data-category="${activeTab}"]`).classList.add('active-panel');
   }
 }
 
 function renderCategoryPanel(category, vegs) {
-  const catInfo = categoryNames[category] || { te: category, emoji: '🥗' };
+  const tel = categoryTelugu[category] || category;
+  const emoji = categoryEmoji[category] || '🥗';
   return `
     <div class="category-header">
-      <span class="category-emoji">${catInfo.emoji}</span>
-      <h3 class="category-title">${category} <span style="font-size:0.9rem; font-weight:normal;">(${catInfo.te})</span></h3>
+      <span class="category-emoji">${emoji}</span>
+      <h3 class="category-title">${category} <span style="font-size:0.9rem; font-weight:normal;">(${tel})</span></h3>
       <span class="category-sub">${vegs.length} items</span>
     </div>
     <div class="product-grid">
@@ -120,11 +122,6 @@ function renderCategoryPanel(category, vegs) {
   `;
 }
 
-function getCategoryEmoji(cat) {
-  const info = categoryNames[cat];
-  return info ? info.emoji : '🥗';
-}
-
 function switchTab(category) {
   activeTab = category;
   document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -141,25 +138,18 @@ function switchTab(category) {
       panel.classList.remove('active-panel');
     }
   });
-  // Reapply search filter if any
-  if (currentSearchQuery) {
-    filterVegetables(currentSearchQuery);
-  }
+  if (currentSearchQuery) filterVegetables(currentSearchQuery);
 }
 
-// Global Search
 function attachSearch() {
   const searchInput = document.getElementById('searchInput');
   const clearBtn = document.getElementById('clearSearch');
   if (!searchInput) return;
-
   const handleSearch = () => {
-    const query = searchInput.value.trim().toLowerCase();
-    currentSearchQuery = query;
-    filterVegetables(query);
-    clearBtn.style.display = query ? 'block' : 'none';
+    currentSearchQuery = searchInput.value.trim().toLowerCase();
+    filterVegetables(currentSearchQuery);
+    clearBtn.style.display = currentSearchQuery ? 'block' : 'none';
   };
-
   searchInput.addEventListener('input', handleSearch);
   clearBtn.addEventListener('click', () => {
     searchInput.value = '';
@@ -171,7 +161,6 @@ function attachSearch() {
 function filterVegetables(query) {
   const noResultsDiv = document.getElementById('noResultsMessage');
   let anyVisible = false;
-
   document.querySelectorAll('.tab-panel').forEach(panel => {
     const cards = panel.querySelectorAll('.product-card');
     let panelHasVisible = false;
@@ -182,16 +171,9 @@ function filterVegetables(query) {
       card.style.display = match ? '' : 'none';
       if (match) panelHasVisible = true;
     });
-    if (query !== '' && !panelHasVisible) {
-      panel.style.display = 'none';
-    } else if (query === '') {
-      panel.style.display = '';
-    } else {
-      panel.style.display = '';
-    }
+    panel.style.display = (query !== '' && !panelHasVisible) ? 'none' : '';
     if (panelHasVisible || query === '') anyVisible = true;
   });
-
   document.querySelectorAll('.tab-btn').forEach(btn => {
     const cat = btn.getAttribute('data-category');
     const panel = document.querySelector(`.tab-panel[data-category="${cat}"]`);
@@ -202,26 +184,22 @@ function filterVegetables(query) {
       btn.style.display = '';
     }
   });
-
   noResultsDiv.style.display = (!anyVisible && query !== '') ? 'block' : 'none';
 }
 
-// Cart Logic
+// Cart functions (unchanged from your version)
 function updateCartUI() {
   const cartContainer = document.getElementById('cartItems');
   const cartCountSpan = document.getElementById('cartCount');
   const cartTotalSpan = document.getElementById('cartTotal');
   if (!cartContainer) return;
-
   if (cart.length === 0) {
     cartContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Cart is empty</div>';
     cartCountSpan.innerText = '0';
     cartTotalSpan.innerText = '₹0';
     return;
   }
-
-  let html = '';
-  let total = 0;
+  let html = '', total = 0;
   cart.forEach((item, idx) => {
     total += item.total;
     html += `
@@ -238,22 +216,15 @@ function updateCartUI() {
   cartContainer.innerHTML = html;
   cartCountSpan.innerText = cart.length;
   cartTotalSpan.innerText = `₹${total.toFixed(2)}`;
-
   document.querySelectorAll('.cart-item-remove').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const id = btn.getAttribute('data-id');
-      removeFromCart(id);
-    });
+    btn.addEventListener('click', () => removeFromCart(btn.getAttribute('data-id')));
   });
 }
 
 function addToCart(vegId, name, telugu, price, unit) {
   const qtyInput = document.getElementById(`qty-${vegId}`);
   let quantity = parseFloat(qtyInput.value);
-  if (isNaN(quantity) || quantity <= 0) {
-    alert('Please enter a valid quantity');
-    return;
-  }
+  if (isNaN(quantity) || quantity <= 0) { alert('Please enter a valid quantity'); return; }
   quantity = Math.round(quantity * 10) / 10;
   const total = quantity * price;
   const existing = cart.find(item => item.id === vegId);
@@ -261,15 +232,7 @@ function addToCart(vegId, name, telugu, price, unit) {
     existing.quantity += quantity;
     existing.total = existing.quantity * existing.price;
   } else {
-    cart.push({
-      id: vegId,
-      name: name,
-      telugu: telugu,
-      quantity: quantity,
-      unit: unit,
-      price: price,
-      total: total
-    });
+    cart.push({ id: vegId, name, telugu, quantity, unit, price, total });
   }
   updateCartUI();
   qtyInput.value = '';
@@ -284,42 +247,27 @@ function attachAddToCartListeners() {
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('add-to-cart-btn')) {
       const btn = e.target;
-      const id = btn.getAttribute('data-id');
-      const name = btn.getAttribute('data-name');
-      const telugu = btn.getAttribute('data-telugu');
-      const price = parseFloat(btn.getAttribute('data-price'));
-      const unit = btn.getAttribute('data-unit');
-      addToCart(id, name, telugu, price, unit);
+      addToCart(btn.getAttribute('data-id'), btn.getAttribute('data-name'), btn.getAttribute('data-telugu'), parseFloat(btn.getAttribute('data-price')), btn.getAttribute('data-unit'));
     }
   });
 }
 
-// Order flow
 function proceedToOrder() {
-  if (cart.length === 0) {
-    alert('Your cart is empty. Add some vegetables first.');
-    return;
-  }
-  const modal = document.getElementById('orderModal');
-  modal.style.display = 'flex';
+  if (cart.length === 0) { alert('Your cart is empty.'); return; }
+  document.getElementById('orderModal').style.display = 'flex';
 }
 
 function confirmOrder() {
   const name = document.getElementById('modalName').value.trim();
   const mobile = document.getElementById('modalMobile').value.trim();
   const address = document.getElementById('modalAddress').value.trim();
-
   if (!name) { alert('Please enter your name'); return; }
-  if (!mobile || !/^[0-9]{10}$/.test(mobile)) { alert('Please enter a valid 10-digit mobile number'); return; }
-  if (!address) { alert('Please enter your delivery address'); return; }
-
+  if (!mobile || !/^[0-9]{10}$/.test(mobile)) { alert('Valid 10-digit mobile required'); return; }
+  if (!address) { alert('Please enter address'); return; }
   let orderLines = cart.map(item => `${item.name} (${item.telugu}): ${item.quantity} ${item.unit}  ₹${item.total.toFixed(2)}`).join('\n');
   const totalBill = cart.reduce((sum, i) => sum + i.total, 0).toFixed(2);
-  const message = `🛒 *SREE VEG MART - New Order*\n\n${orderLines}\n\n💰 *Total Amount: ₹${totalBill}* (Cash on Delivery)\n\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n🏠 Address: ${address}\n\n✅ Order will be confirmed on WhatsApp. Only COD.`;
-
-  const encoded = encodeURIComponent(message);
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
-
+  const message = `🛒 *SREE VEG MART - New Order*\n\n${orderLines}\n\n💰 *Total Amount: ₹${totalBill}* (Cash on Delivery)\n\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n🏠 Address: ${address}\n\n✅ Only COD.`;
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
   document.getElementById('orderModal').style.display = 'none';
   showSuccessPopup();
   cart = [];
@@ -329,8 +277,7 @@ function confirmOrder() {
 function showSuccessPopup() {
   const popup = document.getElementById('orderSuccessPopup');
   popup.style.display = 'flex';
-  const closeBtn = document.getElementById('closePopupBtn');
-  closeBtn.onclick = () => popup.style.display = 'none';
+  document.getElementById('closePopupBtn').onclick = () => popup.style.display = 'none';
   popup.onclick = (e) => { if (e.target === popup) popup.style.display = 'none'; };
 }
 
@@ -338,10 +285,8 @@ async function init() {
   await loadVegetables();
   attachAddToCartListeners();
   updateCartUI();
-  const proceedBtn = document.getElementById('proceedToOrderBtn');
-  if (proceedBtn) proceedBtn.addEventListener('click', proceedToOrder);
-  const confirmBtn = document.getElementById('confirmOrderBtn');
-  if (confirmBtn) confirmBtn.addEventListener('click', confirmOrder);
+  document.getElementById('proceedToOrderBtn').addEventListener('click', proceedToOrder);
+  document.getElementById('confirmOrderBtn').addEventListener('click', confirmOrder);
   const modal = document.getElementById('orderModal');
   const closeModal = document.querySelector('.close-modal');
   if (closeModal) closeModal.onclick = () => modal.style.display = 'none';
