@@ -1,4 +1,5 @@
 // script.js - Tabbed Interface, Cart, Global Search, Order Modal
+// Added Telugu translations for categories
 
 let vegetables = [];
 let cart = []; // each item: { id, name, telugu, quantity, unit, price, total }
@@ -6,6 +7,18 @@ let activeTab = '';
 let currentSearchQuery = '';
 
 const WHATSAPP_NUMBER = '918367645999';
+
+// Category names in English + Telugu mapping
+const categoryNames = {
+  'Leafy Vegetables': { te: 'ఆకు కూరలు', emoji: '🥬' },
+  'Root Vegetables': { te: 'మూల కూరలు', emoji: '🥕' },
+  'Flower Vegetables': { te: 'పుష్ప కూరలు', emoji: '🥦' },
+  'Fruit Vegetables': { te: 'ఫల కూరలు', emoji: '🍆' },
+  'Stem Vegetables': { te: 'కాండ కూరలు', emoji: '🌿' },
+  'Bulb Vegetables': { te: 'గడ్డ కూరలు', emoji: '🧅' },
+  'Seed / Pod Vegetables': { te: 'గింజల కూరలు', emoji: '🌶️' },
+  'Exotic / International': { te: 'అంతర్జాతీయ కూరలు', emoji: '🌍' }
+};
 
 // Load vegetables from JSON
 async function loadVegetables() {
@@ -50,22 +63,23 @@ function buildTabsAndPanels() {
   tabNav.innerHTML = '';
   tabsContent.innerHTML = '';
 
-  const categoryNames = Object.keys(categories);
-  if (categoryNames.length === 0) return;
+  const categoryKeys = Object.keys(categories);
+  if (categoryKeys.length === 0) return;
 
-  // Build tabs
-  categoryNames.forEach((cat, idx) => {
+  // Build tabs (English + Telugu)
+  categoryKeys.forEach((cat, idx) => {
     const btn = document.createElement('button');
     btn.className = 'tab-btn';
     if (idx === 0) btn.classList.add('active');
     btn.setAttribute('data-category', cat);
-    btn.innerHTML = getCategoryEmoji(cat) + ' ' + cat;
+    const catInfo = categoryNames[cat] || { te: cat, emoji: '🥗' };
+    btn.innerHTML = `${catInfo.emoji} ${cat} (${catInfo.te})`;
     btn.onclick = () => switchTab(cat);
     tabNav.appendChild(btn);
   });
 
   // Build panels
-  categoryNames.forEach(cat => {
+  categoryKeys.forEach(cat => {
     const panel = document.createElement('div');
     panel.className = 'tab-panel';
     panel.id = `panel-${cat.replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -75,17 +89,18 @@ function buildTabsAndPanels() {
   });
 
   // Activate first tab
-  if (categoryNames.length > 0) {
-    activeTab = categoryNames[0];
+  if (categoryKeys.length > 0) {
+    activeTab = categoryKeys[0];
     document.querySelector(`.tab-panel[data-category="${activeTab}"]`).classList.add('active-panel');
   }
 }
 
 function renderCategoryPanel(category, vegs) {
+  const catInfo = categoryNames[category] || { te: category, emoji: '🥗' };
   return `
     <div class="category-header">
-      <span class="category-emoji">${getCategoryEmoji(category)}</span>
-      <h3 class="category-title">${category}</h3>
+      <span class="category-emoji">${catInfo.emoji}</span>
+      <h3 class="category-title">${category} <span style="font-size:0.9rem; font-weight:normal;">(${catInfo.te})</span></h3>
       <span class="category-sub">${vegs.length} items</span>
     </div>
     <div class="product-grid">
@@ -106,12 +121,8 @@ function renderCategoryPanel(category, vegs) {
 }
 
 function getCategoryEmoji(cat) {
-  const map = {
-    'Leafy Vegetables': '🥬', 'Root Vegetables': '🥕', 'Flower Vegetables': '🥦',
-    'Fruit Vegetables': '🍆', 'Stem Vegetables': '🌿', 'Bulb Vegetables': '🧅',
-    'Seed / Pod Vegetables': '🌶️', 'Exotic / International': '🌍'
-  };
-  return map[cat] || '🥗';
+  const info = categoryNames[cat];
+  return info ? info.emoji : '🥗';
 }
 
 function switchTab(category) {
@@ -161,8 +172,6 @@ function filterVegetables(query) {
   const noResultsDiv = document.getElementById('noResultsMessage');
   let anyVisible = false;
 
-  // Loop through all product cards in the active tab only (or all tabs? We'll filter globally but show only in active tab)
-  // Simpler: hide/show cards inside each panel separately, but we'll just hide panels if all cards hidden
   document.querySelectorAll('.tab-panel').forEach(panel => {
     const cards = panel.querySelectorAll('.product-card');
     let panelHasVisible = false;
@@ -173,7 +182,6 @@ function filterVegetables(query) {
       card.style.display = match ? '' : 'none';
       if (match) panelHasVisible = true;
     });
-    // Hide the whole panel if no visible cards
     if (query !== '' && !panelHasVisible) {
       panel.style.display = 'none';
     } else if (query === '') {
@@ -184,7 +192,6 @@ function filterVegetables(query) {
     if (panelHasVisible || query === '') anyVisible = true;
   });
 
-  // Also hide tabs that have no visible content? optional
   document.querySelectorAll('.tab-btn').forEach(btn => {
     const cat = btn.getAttribute('data-category');
     const panel = document.querySelector(`.tab-panel[data-category="${cat}"]`);
@@ -232,7 +239,6 @@ function updateCartUI() {
   cartCountSpan.innerText = cart.length;
   cartTotalSpan.innerText = `₹${total.toFixed(2)}`;
 
-  // Remove buttons
   document.querySelectorAll('.cart-item-remove').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const id = btn.getAttribute('data-id');
@@ -250,7 +256,6 @@ function addToCart(vegId, name, telugu, price, unit) {
   }
   quantity = Math.round(quantity * 10) / 10;
   const total = quantity * price;
-  // Check if already in cart
   const existing = cart.find(item => item.id === vegId);
   if (existing) {
     existing.quantity += quantity;
@@ -267,15 +272,7 @@ function addToCart(vegId, name, telugu, price, unit) {
     });
   }
   updateCartUI();
-  // Clear the quantity input after adding
   qtyInput.value = '';
-  // Show small feedback (optional)
-  showAddToCartMessage(name);
-}
-
-function showAddToCartMessage(name) {
-  // optional: a small floating message, but we can just rely on cart update
-  console.log(`${name} added to cart`);
 }
 
 function removeFromCart(id) {
@@ -283,7 +280,6 @@ function removeFromCart(id) {
   updateCartUI();
 }
 
-// Event delegation for Add to Cart buttons
 function attachAddToCartListeners() {
   document.addEventListener('click', (e) => {
     if (e.target.classList.contains('add-to-cart-btn')) {
@@ -317,7 +313,6 @@ function confirmOrder() {
   if (!mobile || !/^[0-9]{10}$/.test(mobile)) { alert('Please enter a valid 10-digit mobile number'); return; }
   if (!address) { alert('Please enter your delivery address'); return; }
 
-  // Build WhatsApp message
   let orderLines = cart.map(item => `${item.name} (${item.telugu}): ${item.quantity} ${item.unit}  ₹${item.total.toFixed(2)}`).join('\n');
   const totalBill = cart.reduce((sum, i) => sum + i.total, 0).toFixed(2);
   const message = `🛒 *SREE VEG MART - New Order*\n\n${orderLines}\n\n💰 *Total Amount: ₹${totalBill}* (Cash on Delivery)\n\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n🏠 Address: ${address}\n\n✅ Order will be confirmed on WhatsApp. Only COD.`;
@@ -325,11 +320,8 @@ function confirmOrder() {
   const encoded = encodeURIComponent(message);
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
 
-  // Close modal
   document.getElementById('orderModal').style.display = 'none';
-  // Show success popup
   showSuccessPopup();
-  // Optional: clear cart after order
   cart = [];
   updateCartUI();
 }
@@ -342,17 +334,14 @@ function showSuccessPopup() {
   popup.onclick = (e) => { if (e.target === popup) popup.style.display = 'none'; };
 }
 
-// Initialize page after DOM loads
 async function init() {
   await loadVegetables();
   attachAddToCartListeners();
   updateCartUI();
-  // Proceed button
   const proceedBtn = document.getElementById('proceedToOrderBtn');
   if (proceedBtn) proceedBtn.addEventListener('click', proceedToOrder);
   const confirmBtn = document.getElementById('confirmOrderBtn');
   if (confirmBtn) confirmBtn.addEventListener('click', confirmOrder);
-  // Close modal
   const modal = document.getElementById('orderModal');
   const closeModal = document.querySelector('.close-modal');
   if (closeModal) closeModal.onclick = () => modal.style.display = 'none';
