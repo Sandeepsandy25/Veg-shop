@@ -72,6 +72,17 @@
             </div>
           </div>
 
+          <!-- Order Timings Banner (NEW) -->
+          <div class="timings-banner">
+            <div class="timings-container">
+              <span class="clock-icon">⏰</span>
+              <div class="timings-text">
+                <p><strong>Order Timings:</strong> Morning 6:00 AM – 1:00 PM &nbsp;|&nbsp; Evening 4:00 PM – 9:00 PM</p>
+                <p class="live-status" id="orderStatusMessage">⌛ Loading...</p>
+              </div>
+            </div>
+          </div>
+
           <!-- Tabs Container -->
           <div class="tabs-container">
             <div class="tabs-nav" id="tabsNav"></div>
@@ -89,6 +100,8 @@
             </div>
             <div id="cartItems" class="cart-items"></div>
             <div class="cart-footer">
+              <div class="cart-subtotal">Subtotal: <span id="cartSubtotal">₹0</span></div>
+              <div class="delivery-charge" id="deliveryChargeRow" style="display: none;">Delivery: <span id="deliveryChargeAmount">₹0</span></div>
               <div class="cart-total">Total: <span id="cartTotal">₹0</span></div>
               <button id="proceedToOrderBtn" class="proceed-btn">Proceed to Order</button>
             </div>
@@ -127,6 +140,7 @@
         <h3>Order Placed Successfully!</h3>
         <p>Your order has been sent via WhatsApp.<br>We will contact you shortly.</p>
         <p class="cod-confirm">💵 Cash on Delivery only</p>
+        <button id="feedbackBtn" class="feedback-popup-btn">📝 Give Feedback</button>
         <button id="closePopupBtn" class="close-popup">OK</button>
       </div>
     </div>
@@ -134,6 +148,7 @@
     <footer class="footer-note">
       <div class="container">
         <p>🌾 Same-day delivery (within 20 km of Kakinada) • Pay on delivery available • Trusted local mart</p>
+        <button id="feedbackFooterBtn" class="feedback-footer-btn">📝 Share Your Experience</button>
       </div>
     </footer>
   </div>
