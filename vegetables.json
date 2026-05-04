@@ -41,7 +41,6 @@
     { "id": "pumpkin", "name": "Pumpkin", "telugu": "గుమ్మడికాయ", "price": 30, "emoji": "🎃", "unit": "kg", "category": "Fruit Vegetables", "available": true },
     { "id": "green_peas", "name": "Green Peas", "telugu": "పచ్చి బఠానీ", "price": 60, "emoji": "🟢", "unit": "kg", "category": "Fruit Vegetables", "available": true },
     { "id": "capsicum", "name": "Capsicum", "telugu": "కాప్సికమ్", "price": 80, "emoji": "🫑", "unit": "kg", "category": "Fruit Vegetables", "available": true },
-    { "id": "zucchini", "name": "Zucchini", "telugu": "జుక్కినీ", "price": 65, "emoji": "🥒", "unit": "kg", "category": "Fruit Vegetables", "available": true },
     { "id": "indian_round_gourd", "name": "Indian Round Gourd", "telugu": "దొండకాయ", "price": 40, "emoji": "🥒", "unit": "kg", "category": "Fruit Vegetables", "available": true },
 
     { "id": "lotus_stem", "name": "Lotus Stem", "telugu": "తామర కాడ", "price": 80, "emoji": "🌿", "unit": "kg", "category": "Stem Vegetables", "available": true },
