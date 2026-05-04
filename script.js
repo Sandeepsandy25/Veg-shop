@@ -1,29 +1,113 @@
-// script.js - Tabbed Interface with Telugu Category Names
+// script.js - All modifications + availability check
 
 let vegetables = [];
 let cart = [];
 let activeTab = '';
 let currentSearchQuery = '';
-
 const WHATSAPP_NUMBER = '918367645999';
 
 // Telugu translations for categories
 const categoryTelugu = {
-  'Leafy Vegetables': 'ఆకు కూరలు',
-  'Root Vegetables': 'మూల కూరలు',
-  'Flower Vegetables': 'పుష్ప కూరలు',
-  'Fruit Vegetables': 'ఫల కూరలు',
-  'Stem Vegetables': 'కాండ కూరలు',
-  'Bulb Vegetables': 'గడ్డ కూరలు',
-  'Seed / Pod Vegetables': 'గింజల కూరలు',
-  'Exotic / International': 'అంతర్జాతీయ కూరలు'
+  'Leafy Vegetables': 'ఆకు కూరలు', 'Root Vegetables': 'మూల కూరలు',
+  'Flower Vegetables': 'పుష్ప కూరలు', 'Fruit Vegetables': 'ఫల కూరలు',
+  'Stem Vegetables': 'కాండ కూరలు', 'Bulb Vegetables': 'గడ్డ కూరలు',
+  'Seed / Pod Vegetables': 'గింజల కూరలు', 'Exotic / International': 'అంతర్జాతీయ కూరలు'
 };
-
 const categoryEmoji = {
   'Leafy Vegetables': '🥬', 'Root Vegetables': '🥕', 'Flower Vegetables': '🥦',
   'Fruit Vegetables': '🍆', 'Stem Vegetables': '🌿', 'Bulb Vegetables': '🧅',
   'Seed / Pod Vegetables': '🌶️', 'Exotic / International': '🌍'
 };
+
+function getDeliveryCharge(subtotal) {
+  return subtotal > 199 ? 0 : 30;
+}
+
+function updateCartUI() {
+  const cartContainer = document.getElementById('cartItems');
+  const cartCountSpan = document.getElementById('cartCount');
+  const cartSubtotalSpan = document.getElementById('cartSubtotal');
+  const deliveryRow = document.getElementById('deliveryChargeRow');
+  const deliveryAmountSpan = document.getElementById('deliveryChargeAmount');
+  const cartTotalSpan = document.getElementById('cartTotal');
+  if (!cartContainer) return;
+
+  if (cart.length === 0) {
+    cartContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Cart is empty</div>';
+    cartCountSpan.innerText = '0';
+    cartSubtotalSpan.innerText = '₹0';
+    deliveryRow.style.display = 'none';
+    cartTotalSpan.innerText = '₹0';
+    return;
+  }
+
+  let subtotal = 0;
+  let html = '';
+  cart.forEach((item, idx) => {
+    subtotal += item.total;
+    html += `
+      <div class="cart-item" data-cart-idx="${idx}">
+        <div class="cart-item-details">
+          <div class="cart-item-name">${item.name} (${item.telugu})</div>
+          <div class="cart-item-unit">${item.quantity} ${item.unit} @ ₹${item.price}/${item.unit}</div>
+        </div>
+        <div class="cart-item-price">₹${item.total.toFixed(2)}</div>
+        <button class="cart-item-remove" data-id="${item.id}">🗑️</button>
+      </div>
+    `;
+  });
+  cartContainer.innerHTML = html;
+  cartCountSpan.innerText = cart.length;
+  cartSubtotalSpan.innerText = `₹${subtotal.toFixed(2)}`;
+
+  const deliveryFee = getDeliveryCharge(subtotal);
+  if (deliveryFee > 0) {
+    deliveryRow.style.display = 'flex';
+    deliveryAmountSpan.innerText = `₹${deliveryFee.toFixed(2)}`;
+  } else {
+    deliveryRow.style.display = 'flex';
+    deliveryAmountSpan.innerText = 'Free 🎉';
+  }
+  const total = subtotal + deliveryFee;
+  cartTotalSpan.innerText = `₹${total.toFixed(2)}`;
+
+  document.querySelectorAll('.cart-item-remove').forEach(btn => {
+    btn.addEventListener('click', () => removeFromCart(btn.getAttribute('data-id')));
+  });
+}
+
+// MODIFIED: Availability check added
+function addToCart(vegId, name, telugu, price, unit) {
+  // Find the vegetable in the master list
+  const veg = vegetables.find(v => v.id === vegId);
+  if (!veg) {
+    alert('Item not found.');
+    return;
+  }
+  // Check availability
+  if (veg.available === false) {
+    alert(`❌ Sorry, ${name} is currently out of stock. Please choose another vegetable.`);
+    return;
+  }
+
+  const qtyInput = document.getElementById(`qty-${vegId}`);
+  let quantity = parseFloat(qtyInput.value);
+  if (isNaN(quantity) || quantity <= 0) {
+    alert('Please enter a valid quantity');
+    return;
+  }
+  quantity = Math.round(quantity * 10) / 10;
+  const total = quantity * price;
+  const existing = cart.find(item => item.id === vegId);
+  if (existing) {
+    existing.quantity += quantity;
+    existing.total = existing.quantity * existing.price;
+  } else {
+    cart.push({ id: vegId, name, telugu, quantity, unit, price, total });
+  }
+  updateCartUI();
+  qtyInput.value = '';
+}
 
 async function loadVegetables() {
   try {
@@ -31,29 +115,46 @@ async function loadVegetables() {
     if (!response.ok) throw new Error();
     const data = await response.json();
     vegetables = data.vegetables;
+    // Ensure each item has an 'available' field (default true if missing)
+    vegetables.forEach(v => {
+      if (v.available === undefined) v.available = true;
+    });
   } catch (error) {
     console.warn('Using fallback data');
     vegetables = getFallbackVegetables();
   }
   buildTabsAndPanels();
   attachSearch();
+  updateOrderTimingStatus();
+  setInterval(updateOrderTimingStatus, 60000);
 }
 
 function getFallbackVegetables() {
   return [
-    { id: 'tomato', name: 'Tomato', telugu: 'టమోటా', price: 40, emoji: '🍅', unit: 'kg', category: 'Fruit Vegetables' },
-    { id: 'onion', name: 'Onion', telugu: 'ఉల్లిపాయ', price: 30, emoji: '🧅', unit: 'kg', category: 'Bulb Vegetables' },
-    { id: 'potato', name: 'Potato', telugu: 'ఆలుగడ్డ', price: 35, emoji: '🥔', unit: 'kg', category: 'Root Vegetables' }
+    { id: 'tomato', name: 'Tomato', telugu: 'టమోటా', price: 40, emoji: '🍅', unit: 'kg', category: 'Fruit Vegetables', available: true },
+    { id: 'onion', name: 'Onion', telugu: 'ఉల్లిపాయ', price: 30, emoji: '🧅', unit: 'kg', category: 'Bulb Vegetables', available: true },
+    { id: 'potato', name: 'Potato', telugu: 'ఆలుగడ్డ', price: 35, emoji: '🥔', unit: 'kg', category: 'Root Vegetables', available: true },
+    { id: 'mushroom', name: 'Mushroom', telugu: 'మష్రూమ్', price: 60, emoji: '🍄', unit: 'packet', category: 'Exotic / International', available: true }
   ];
 }
 
-function getCategories() {
-  const cats = {};
-  vegetables.forEach(veg => {
-    if (!cats[veg.category]) cats[veg.category] = [];
-    cats[veg.category].push(veg);
-  });
-  return cats;
+function updateOrderTimingStatus() {
+  const statusSpan = document.getElementById('orderStatusMessage');
+  if (!statusSpan) return;
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const currentTime = hours + minutes / 60;
+  let isOpen = false;
+  let message = '';
+  if ((currentTime >= 6 && currentTime <= 13) || (currentTime >= 16 && currentTime <= 21)) {
+    isOpen = true;
+    message = '🟢 We are accepting orders now!';
+  } else {
+    message = '🔴 Orders closed. Please order between 6AM-1PM or 4PM-9PM.';
+  }
+  statusSpan.innerHTML = message;
+  statusSpan.style.color = isOpen ? '#2e7d32' : '#c62828';
 }
 
 function buildTabsAndPanels() {
@@ -61,14 +162,10 @@ function buildTabsAndPanels() {
   const tabNav = document.getElementById('tabsNav');
   const tabsContent = document.getElementById('tabsContent');
   if (!tabNav || !tabsContent) return;
-
   tabNav.innerHTML = '';
   tabsContent.innerHTML = '';
-
   const categoryNames = Object.keys(categories);
   if (categoryNames.length === 0) return;
-
-  // Build tabs with Telugu text
   categoryNames.forEach((cat, idx) => {
     const btn = document.createElement('button');
     btn.className = 'tab-btn';
@@ -80,8 +177,6 @@ function buildTabsAndPanels() {
     btn.onclick = () => switchTab(cat);
     tabNav.appendChild(btn);
   });
-
-  // Build panels with Telugu in headers
   categoryNames.forEach(cat => {
     const panel = document.createElement('div');
     panel.className = 'tab-panel';
@@ -89,7 +184,6 @@ function buildTabsAndPanels() {
     panel.innerHTML = renderCategoryPanel(cat, categories[cat]);
     tabsContent.appendChild(panel);
   });
-
   if (categoryNames.length > 0) {
     activeTab = categoryNames[0];
     document.querySelector(`.tab-panel[data-category="${activeTab}"]`).classList.add('active-panel');
@@ -112,9 +206,10 @@ function renderCategoryPanel(category, vegs) {
           <div class="product-name">${veg.name}</div>
           <div class="product-name-telugu">${veg.telugu}</div>
           <div class="product-price">₹${veg.price} <span style="font-size:0.7rem;">/ ${veg.unit}</span></div>
+          ${veg.available === false ? '<div style="color:#e53935; font-size:0.7rem; margin-bottom:8px;">❌ Out of stock</div>' : ''}
           <div class="quantity-control">
-            <input type="number" class="quantity-input" id="qty-${veg.id}" min="0" step="0.5" placeholder="Qty" value="">
-            <button class="add-to-cart-btn" data-id="${veg.id}" data-name="${veg.name}" data-telugu="${veg.telugu}" data-price="${veg.price}" data-unit="${veg.unit}">+ Add</button>
+            <input type="number" class="quantity-input" id="qty-${veg.id}" min="0" step="0.5" placeholder="Qty" value="${veg.available === false ? 'disabled' : ''}" ${veg.available === false ? 'disabled' : ''}>
+            <button class="add-to-cart-btn" data-id="${veg.id}" data-name="${veg.name}" data-telugu="${veg.telugu}" data-price="${veg.price}" data-unit="${veg.unit}" ${veg.available === false ? 'disabled' : ''}>+ Add</button>
           </div>
         </div>
       `).join('')}
@@ -122,21 +217,24 @@ function renderCategoryPanel(category, vegs) {
   `;
 }
 
+function getCategories() {
+  const cats = {};
+  vegetables.forEach(veg => {
+    if (!cats[veg.category]) cats[veg.category] = [];
+    cats[veg.category].push(veg);
+  });
+  return cats;
+}
+
 function switchTab(category) {
   activeTab = category;
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    if (btn.getAttribute('data-category') === category) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
+    if (btn.getAttribute('data-category') === category) btn.classList.add('active');
+    else btn.classList.remove('active');
   });
   document.querySelectorAll('.tab-panel').forEach(panel => {
-    if (panel.getAttribute('data-category') === category) {
-      panel.classList.add('active-panel');
-    } else {
-      panel.classList.remove('active-panel');
-    }
+    if (panel.getAttribute('data-category') === category) panel.classList.add('active-panel');
+    else panel.classList.remove('active-panel');
   });
   if (currentSearchQuery) filterVegetables(currentSearchQuery);
 }
@@ -187,57 +285,6 @@ function filterVegetables(query) {
   noResultsDiv.style.display = (!anyVisible && query !== '') ? 'block' : 'none';
 }
 
-// Cart functions (unchanged from your version)
-function updateCartUI() {
-  const cartContainer = document.getElementById('cartItems');
-  const cartCountSpan = document.getElementById('cartCount');
-  const cartTotalSpan = document.getElementById('cartTotal');
-  if (!cartContainer) return;
-  if (cart.length === 0) {
-    cartContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#888;">Cart is empty</div>';
-    cartCountSpan.innerText = '0';
-    cartTotalSpan.innerText = '₹0';
-    return;
-  }
-  let html = '', total = 0;
-  cart.forEach((item, idx) => {
-    total += item.total;
-    html += `
-      <div class="cart-item" data-cart-idx="${idx}">
-        <div class="cart-item-details">
-          <div class="cart-item-name">${item.name} (${item.telugu})</div>
-          <div class="cart-item-unit">${item.quantity} ${item.unit} @ ₹${item.price}/${item.unit}</div>
-        </div>
-        <div class="cart-item-price">₹${item.total.toFixed(2)}</div>
-        <button class="cart-item-remove" data-id="${item.id}">🗑️</button>
-      </div>
-    `;
-  });
-  cartContainer.innerHTML = html;
-  cartCountSpan.innerText = cart.length;
-  cartTotalSpan.innerText = `₹${total.toFixed(2)}`;
-  document.querySelectorAll('.cart-item-remove').forEach(btn => {
-    btn.addEventListener('click', () => removeFromCart(btn.getAttribute('data-id')));
-  });
-}
-
-function addToCart(vegId, name, telugu, price, unit) {
-  const qtyInput = document.getElementById(`qty-${vegId}`);
-  let quantity = parseFloat(qtyInput.value);
-  if (isNaN(quantity) || quantity <= 0) { alert('Please enter a valid quantity'); return; }
-  quantity = Math.round(quantity * 10) / 10;
-  const total = quantity * price;
-  const existing = cart.find(item => item.id === vegId);
-  if (existing) {
-    existing.quantity += quantity;
-    existing.total = existing.quantity * existing.price;
-  } else {
-    cart.push({ id: vegId, name, telugu, quantity, unit, price, total });
-  }
-  updateCartUI();
-  qtyInput.value = '';
-}
-
 function removeFromCart(id) {
   cart = cart.filter(item => item.id !== id);
   updateCartUI();
@@ -245,15 +292,31 @@ function removeFromCart(id) {
 
 function attachAddToCartListeners() {
   document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('add-to-cart-btn')) {
+    if (e.target.classList.contains('add-to-cart-btn') && !e.target.disabled) {
       const btn = e.target;
-      addToCart(btn.getAttribute('data-id'), btn.getAttribute('data-name'), btn.getAttribute('data-telugu'), parseFloat(btn.getAttribute('data-price')), btn.getAttribute('data-unit'));
+      const id = btn.getAttribute('data-id');
+      const name = btn.getAttribute('data-name');
+      const telugu = btn.getAttribute('data-telugu');
+      const price = parseFloat(btn.getAttribute('data-price'));
+      const unit = btn.getAttribute('data-unit');
+      addToCart(id, name, telugu, price, unit);
     }
   });
 }
 
 function proceedToOrder() {
-  if (cart.length === 0) { alert('Your cart is empty.'); return; }
+  if (cart.length === 0) {
+    alert('Your cart is empty. Add some vegetables first.');
+    return;
+  }
+  const now = new Date();
+  const hours = now.getHours();
+  const minutes = now.getMinutes();
+  const currentTime = hours + minutes / 60;
+  if (!((currentTime >= 6 && currentTime <= 13) || (currentTime >= 16 && currentTime <= 21))) {
+    alert('Orders are accepted only between 6:00 AM – 1:00 PM and 4:00 PM – 9:00 PM. Please try again later.');
+    return;
+  }
   document.getElementById('orderModal').style.display = 'flex';
 }
 
@@ -264,10 +327,13 @@ function confirmOrder() {
   if (!name) { alert('Please enter your name'); return; }
   if (!mobile || !/^[0-9]{10}$/.test(mobile)) { alert('Valid 10-digit mobile required'); return; }
   if (!address) { alert('Please enter address'); return; }
+  const subtotal = cart.reduce((sum, i) => sum + i.total, 0);
+  const deliveryFee = getDeliveryCharge(subtotal);
+  const total = subtotal + deliveryFee;
   let orderLines = cart.map(item => `${item.name} (${item.telugu}): ${item.quantity} ${item.unit}  ₹${item.total.toFixed(2)}`).join('\n');
-  const totalBill = cart.reduce((sum, i) => sum + i.total, 0).toFixed(2);
-  const message = `🛒 *SREE VEG MART - New Order*\n\n${orderLines}\n\n💰 *Total Amount: ₹${totalBill}* (Cash on Delivery)\n\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n🏠 Address: ${address}\n\n✅ Only COD.`;
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+  const message = `🛒 *SREE VEG MART - New Order*\n\n${orderLines}\n\n💰 *Subtotal: ₹${subtotal.toFixed(2)}*\n🚚 *Delivery: ${deliveryFee === 0 ? 'FREE' : '₹' + deliveryFee.toFixed(2)}*\n💵 *Total Amount: ₹${total.toFixed(2)}* (Cash on Delivery)\n\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n🏠 Address: ${address}\n\n✅ Only COD.`;
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
   document.getElementById('orderModal').style.display = 'none';
   showSuccessPopup();
   cart = [];
@@ -281,12 +347,20 @@ function showSuccessPopup() {
   popup.onclick = (e) => { if (e.target === popup) popup.style.display = 'none'; };
 }
 
+function sendFeedback() {
+  const message = `📝 *SREE VEG MART - Customer Feedback*\n\nHello! I recently placed an order. Here is my feedback:\n\n`;
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, '_blank');
+}
+
 async function init() {
   await loadVegetables();
   attachAddToCartListeners();
   updateCartUI();
   document.getElementById('proceedToOrderBtn').addEventListener('click', proceedToOrder);
   document.getElementById('confirmOrderBtn').addEventListener('click', confirmOrder);
+  document.getElementById('feedbackBtn').addEventListener('click', sendFeedback);
+  document.getElementById('feedbackFooterBtn').addEventListener('click', sendFeedback);
   const modal = document.getElementById('orderModal');
   const closeModal = document.querySelector('.close-modal');
   if (closeModal) closeModal.onclick = () => modal.style.display = 'none';
