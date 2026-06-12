@@ -117,3 +117,9 @@ th { background: #F3F4F6; font-weight: 600; }
   .nav-btn { width: auto; }
   .user-info { margin-top: 0; border: none; margin-left: auto; display: flex; align-items: center; gap: 12px; }
 }
+.edit-btn {
+  background: #F97316;
+}
+.edit-btn:hover {
+  background: #EA580C;
+}
