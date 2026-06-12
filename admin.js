@@ -99,16 +99,22 @@ async function loadProducts() {
       row.insertCell(4).textContent = prod.category;
       row.insertCell(5).innerHTML = `<span class="status-badge ${prod.available ? 'status-available' : 'status-unavailable'}">${prod.available ? 'Available' : 'Out of Stock'}</span>`;
       const actionsCell = row.insertCell(6);
+      
+      // Save button
       const saveBtn = document.createElement('button');
       saveBtn.textContent = 'Save';
       saveBtn.className = 'edit-btn';
       saveBtn.onclick = () => updateProductPrice(prod.id, prod.name, parseInt(document.getElementById(`price-${prod.id}`).value));
       actionsCell.appendChild(saveBtn);
+      
+      // Toggle Stock button
       const toggleBtn = document.createElement('button');
       toggleBtn.textContent = 'Toggle Stock';
       toggleBtn.className = 'toggle-stock';
       toggleBtn.onclick = () => toggleProductAvailability(prod.id, prod.name, !prod.available);
       actionsCell.appendChild(toggleBtn);
+      
+      // Edit button (only for super_admin)
       if (currentUserRole === 'super_admin') {
         const editBtn = document.createElement('button');
         editBtn.textContent = '✏️';
@@ -150,33 +156,48 @@ async function loadProducts() {
 }
 
 async function updateProductPrice(id, name, newPrice) {
-  const oldPrice = (await db.collection('products').doc(id).get()).data().price;
-  if (oldPrice === newPrice) return;
-  await db.collection('products').doc(id).update({ price: newPrice });
-  await db.collection('activityLog').add({
-    adminEmail: currentUser.email,
-    action: 'price_update',
-    productId: id,
-    productName: name,
-    oldPrice: oldPrice,
-    newPrice: newPrice,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  showToast(`Price of ${name} updated to ₹${newPrice}`);
-  loadStatistics();
+  try {
+    const doc = await db.collection('products').doc(id).get();
+    const oldPrice = doc.data().price;
+    if (oldPrice === newPrice) {
+      alert(`⚠️ Price for ${name} is already ₹${newPrice}. No change made.`);
+      return;
+    }
+    await db.collection('products').doc(id).update({ price: newPrice });
+    await db.collection('activityLog').add({
+      adminEmail: currentUser.email,
+      action: 'price_update',
+      productId: id,
+      productName: name,
+      oldPrice: oldPrice,
+      newPrice: newPrice,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    alert(`✅ Price of ${name} updated from ₹${oldPrice} to ₹${newPrice}`);
+    showToast(`Price of ${name} updated to ₹${newPrice}`);
+    loadStatistics();
+  } catch (err) {
+    alert(`❌ Error updating price: ${err.message}`);
+  }
 }
 
 async function toggleProductAvailability(id, name, newStatus) {
-  await db.collection('products').doc(id).update({ available: newStatus });
-  await db.collection('activityLog').add({
-    adminEmail: currentUser.email,
-    action: newStatus ? 'made_available' : 'made_unavailable',
-    productId: id,
-    productName: name,
-    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-  });
-  loadProducts();
-  loadStatistics();
+  try {
+    await db.collection('products').doc(id).update({ available: newStatus });
+    await db.collection('activityLog').add({
+      adminEmail: currentUser.email,
+      action: newStatus ? 'made_available' : 'made_unavailable',
+      productId: id,
+      productName: name,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    alert(`🔄 ${name} is now ${newStatus ? 'IN STOCK' : 'OUT OF STOCK'}`);
+    showToast(`${name} is now ${newStatus ? 'Available' : 'Out of Stock'}`);
+    loadProducts();  // Refresh the table to update status badge
+    loadStatistics();
+  } catch (err) {
+    alert(`❌ Error toggling stock: ${err.message}`);
+  }
 }
 
 // Super admin only – add/edit product
@@ -208,9 +229,11 @@ document.getElementById('productForm').addEventListener('submit', async (e) => {
   };
   if (id) {
     await db.collection('products').doc(id).update(data);
+    alert(`✅ Product "${data.name}" updated successfully.`);
   } else {
     const newId = data.name.toLowerCase().replace(/ /g, '_');
     await db.collection('products').doc(newId).set({ id: newId, ...data });
+    alert(`✅ New product "${data.name}" added successfully.`);
   }
   productModal.style.display = 'none';
   loadProducts();
@@ -245,8 +268,11 @@ async function loadBanners() {
   });
   document.querySelectorAll('.banner-actions .delete-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-      await db.collection('banners').doc(btn.dataset.id).delete();
-      loadBanners();
+      if (confirm('Delete this banner?')) {
+        await db.collection('banners').doc(btn.dataset.id).delete();
+        loadBanners();
+        alert('Banner deleted.');
+      }
     });
   });
 }
@@ -284,8 +310,10 @@ document.getElementById('bannerForm').addEventListener('submit', async (e) => {
   };
   if (id) {
     await db.collection('banners').doc(id).update(data);
+    alert('Banner updated.');
   } else {
     await db.collection('banners').add(data);
+    alert('Banner added.');
   }
   bannerModal.style.display = 'none';
   loadBanners();
@@ -322,8 +350,11 @@ async function loadOffers() {
   });
   document.querySelectorAll('.offer-actions .delete-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-      await db.collection('offers').doc(btn.dataset.id).delete();
-      loadOffers();
+      if (confirm('Delete this offer?')) {
+        await db.collection('offers').doc(btn.dataset.id).delete();
+        loadOffers();
+        alert('Offer deleted.');
+      }
     });
   });
 }
@@ -367,8 +398,10 @@ document.getElementById('offerForm').addEventListener('submit', async (e) => {
   };
   if (id) {
     await db.collection('offers').doc(id).update(data);
+    alert('Offer updated.');
   } else {
     await db.collection('offers').add(data);
+    alert('Offer added.');
   }
   offerModal.style.display = 'none';
   loadOffers();
