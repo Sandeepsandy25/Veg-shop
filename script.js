@@ -429,10 +429,9 @@ function initCheckout() {
         return `${i.name}: ${unitDisplay} @ ₹${i.price}`;
       }).join('\n');
       const deliveryText = delivery === 0 ? 'FREE' : `₹${delivery}`;
-      // Updated brand name and WhatsApp number (change as needed)
+      // Updated WhatsApp number for Sree Veg Mart: 918367645999
       const message = `🛒 *SREE VEG MART - New Order*\n\n${orderDetails}\n\n💰 Subtotal: ₹${subtotal}\n🚚 Delivery: ${deliveryText}\n🎟️ Discount: -₹${discountAmt}\n💵 Total: ₹${total}\n\n👤 Name: ${name}\n📱 Mobile: ${mobile}\n🏠 Address: ${addressWithMap}\n\n✅ Only COD.`;
-      // Replace with your WhatsApp number (include country code without '+')
-      window.open(`https://wa.me/919000793333?text=${encodeURIComponent(message)}`, '_blank');
+      window.open(`https://wa.me/918367645999?text=${encodeURIComponent(message)}`, '_blank');
       cart = []; couponApplied = false; couponDiscount = 0; saveCart(); updateCartUI(); closeCartDrawer();
       showToast('Order placed! Check your WhatsApp');
       document.getElementById('checkoutName').value = '';
