@@ -213,13 +213,23 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 16px;
 }
 
+/* Hero Section */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, #7B2D0D 0%, var(--primary-orange) 100%);
-  min-height: 600px;
-  display: flex;
-  align-items: center;
   overflow: hidden;
+  min-height: 600px;
+}
+.hero-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: 0;
 }
 .hero-overlay {
   position: absolute;
@@ -227,7 +237,8 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0,0,0,0.5);
+  z-index: 1;
 }
 .hero-content {
   max-width: 1400px;
@@ -251,7 +262,7 @@ h1, h2, h3, h4, h5, h6 {
 .hero-image { flex: 1; }
 .hero-image img { width: 100%; max-width: 500px; border-radius: 32px; box-shadow: var(--shadow-lg); }
 
-/* Categories - Horizontal scroll on mobile, normal grid on desktop */
+/* Categories - Horizontal scroll on mobile */
 .categories {
   padding: 80px 24px;
   background: var(--cream-dark);
@@ -263,7 +274,6 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 24px;
 }
-/* On mobile: make categories scroll horizontally */
 @media (max-width: 768px) {
   .categories-grid {
     display: flex;
@@ -309,7 +319,7 @@ h1, h2, h3, h4, h5, h6 {
 .category-card h4 { font-size: 1.1rem; margin-bottom: 4px; }
 .category-card p { font-size: 0.8rem; color: var(--gray-text); }
 
-/* Products grid - more compact on mobile */
+/* Products grid - compact on mobile */
 .featured-products {
   padding: 80px 24px;
   max-width: 1400px;
@@ -320,13 +330,15 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 28px;
 }
-@media (max-width: 640px) {
+/* Mobile fixes: ensure two columns, prevent overflow */
+@media (max-width: 768px) {
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
   .product-card {
     border-radius: 16px;
+    overflow: hidden;
   }
   .product-image {
     height: 140px;
@@ -340,9 +352,13 @@ h1, h2, h3, h4, h5, h6 {
   }
   .product-name {
     font-size: 0.9rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
   .product-name-telugu {
     font-size: 0.65rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
   }
   .product-price-row .current-price {
     font-size: 1rem;
@@ -376,6 +392,8 @@ h1, h2, h3, h4, h5, h6 {
     width: 28px;
     height: 28px;
     font-size: 12px;
+    top: 8px;
+    right: 8px;
   }
   .product-rating {
     margin-bottom: 6px;
@@ -390,6 +408,20 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.6rem;
     padding: 1px 4px;
   }
+  .out-of-stock {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+  }
+  .product-badge {
+    font-size: 0.6rem;
+    padding: 2px 6px;
+    top: 8px;
+    left: 8px;
+  }
+  .quickview-btn {
+    font-size: 0.65rem;
+    padding: 6px 8px;
+  }
 }
 @media (max-width: 480px) {
   .product-grid {
@@ -397,23 +429,58 @@ h1, h2, h3, h4, h5, h6 {
     gap: 10px;
   }
   .product-card {
-    border-radius: 14px;
+    border-radius: 12px;
   }
   .product-image {
-    height: 120px;
+    height: 110px;
   }
   .product-image div {
-    font-size: 40px !important;
-    height: 120px !important;
+    font-size: 36px !important;
+    height: 110px !important;
   }
   .product-info {
     padding: 8px;
   }
   .product-name {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
+  }
+  .product-name-telugu {
+    font-size: 0.6rem;
   }
   .current-price {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
+  }
+  .product-unit {
+    font-size: 0.6rem;
+  }
+  .add-to-cart-btn {
+    padding: 5px;
+    font-size: 0.65rem;
+  }
+  .quick-qty {
+    font-size: 0.55rem;
+    padding: 2px 4px;
+  }
+  .wishlist-icon {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+    top: 6px;
+    right: 6px;
+  }
+  .out-of-stock {
+    font-size: 0.65rem;
+    padding: 3px 6px;
+  }
+  .product-badge {
+    font-size: 0.55rem;
+    padding: 2px 5px;
+    top: 6px;
+    left: 6px;
+  }
+  .quickview-btn {
+    font-size: 0.6rem;
+    padding: 5px 6px;
   }
 }
 
@@ -448,6 +515,24 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
   z-index: 2;
 }
+.out-of-stock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: white;
+  font-size: 0.9rem;
+  z-index: 3;
+  backdrop-filter: blur(3px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 .wishlist-icon {
   position: absolute;
   top: 12px;
@@ -472,15 +557,25 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   margin-bottom: 6px;
 }
-.product-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; }
-.product-name-telugu { font-size: 0.7rem; color: var(--gray-text); margin-bottom: 6px; }
+.product-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+.product-name-telugu {
+  font-size: 0.7rem;
+  color: var(--gray-text);
+  margin-bottom: 6px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
 .product-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
 .stars { color: #fbbf24; font-size: 0.8rem; }
 .review-count { font-size: 0.7rem; color: var(--gray-text); }
-.product-price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 14px; }
+.product-price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
 .current-price { font-size: 1.2rem; font-weight: 700; color: var(--primary-orange); }
-.original-price { font-size: 0.85rem; color: var(--gray-text); text-decoration: line-through; }
-.discount-badge { font-size: 0.7rem; background: #fee2e2; color: #ef4444; padding: 2px 6px; border-radius: 50px; }
 .product-unit { font-size: 0.75rem; color: var(--gray-text); margin-bottom: 14px; }
 .quantity-add { display: flex; gap: 10px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
 .product-quantity {
@@ -547,8 +642,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 @media (max-width: 480px) {
   .quick-qty {
-    font-size: 0.65rem;
-    padding: 4px 6px;
+    font-size: 0.6rem;
+    padding: 3px 5px;
   }
 }
 @media (max-width: 640px) {
@@ -561,6 +656,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Promo Banner (optional, kept but can be hidden) */
 .promo-banner {
   background: linear-gradient(135deg, var(--dark-orange), var(--primary-orange));
   margin: 40px 24px;
@@ -599,6 +695,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .promo-badge span { font-size: 2rem; display: block; }
 
+/* Features & Why Choose Us */
 .features {
   padding: 80px 24px;
   max-width: 1400px;
@@ -621,6 +718,7 @@ h1, h2, h3, h4, h5, h6 {
 .feature-card h4 { font-size: 1.2rem; margin-bottom: 8px; }
 .feature-card p { font-size: 0.85rem; color: var(--gray-text); }
 
+/* Testimonials */
 .testimonials {
   padding: 80px 24px;
   background: var(--cream-dark);
@@ -668,6 +766,7 @@ h1, h2, h3, h4, h5, h6 {
 .testimonial-rating { color: #fbbf24; margin-bottom: 12px; }
 .testimonial-text { color: var(--gray-text); font-style: italic; }
 
+/* Delivery Info */
 .delivery-info {
   padding: 80px 24px;
   max-width: 1400px;
@@ -686,6 +785,7 @@ h1, h2, h3, h4, h5, h6 {
 .delivery-map { background: var(--light-orange); border-radius: 32px; padding: 32px; text-align: center; }
 .map-placeholder { background: #E5E7EB; border-radius: 24px; padding: 60px 20px; }
 
+/* Newsletter */
 .newsletter {
   background: linear-gradient(135deg, var(--dark-orange), var(--primary-orange));
   padding: 60px 24px;
@@ -699,6 +799,7 @@ h1, h2, h3, h4, h5, h6 {
 .newsletter-form button { background: var(--dark-text); color: white; border: none; padding: 14px 32px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: var(--transition); }
 .newsletter-form button:hover { background: #111827; }
 
+/* Footer */
 .footer {
   background: #111827;
   color: #9CA3AF;
@@ -978,50 +1079,309 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
 }
 
-/* Hero Background Video */
-.hero {
-  position: relative;
-  overflow: hidden;
-  min-height: 600px;
-}
-.hero-video {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  transform: translate(-50%, -50%);
-  object-fit: cover;
-  z-index: 0;
-}
-.hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1;
-}
-.hero-content {
-  position: relative;
-  z-index: 2;
-}
-
-/* Responsive adjustments for categories on mobile (already done) */
-/* Additional small screen tweaks */
-@media (max-width: 480px) {
-  .cart-drawer-coupon {
-    flex-wrap: wrap;
+/* ========== COMPREHENSIVE MOBILE FIXES ========== */
+@media (max-width: 768px) {
+  /* Navbar */
+  .nav-container {
+    padding: 0 16px;
   }
-  .cart-drawer-coupon button {
-    width: 100%;
+  .nav-logo .logo-icon {
+    font-size: 22px;
+  }
+  .nav-logo .logo-text {
+    font-size: 18px;
+  }
+  .nav-logo .logo-location {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  .nav-search input {
+    padding: 10px 12px 10px 38px;
+    font-size: 12px;
+  }
+  .nav-search i {
+    left: 12px;
+    font-size: 12px;
+  }
+  .nav-actions {
+    gap: 12px;
+  }
+  .nav-icon {
+    font-size: 12px;
+    gap: 4px;
+  }
+  .nav-icon i {
+    font-size: 16px;
+  }
+  .cart-count {
+    font-size: 9px;
+    padding: 1px 4px;
+    top: -6px;
+    right: -8px;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 450px;
+  }
+  .hero-content {
+    padding: 40px 16px;
+    flex-direction: column;
+    text-align: center;
+  }
+  .hero-text h1 {
+    font-size: 1.8rem;
+  }
+  .hero-text p {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+  .hero-buttons {
+    gap: 12px;
+    margin-bottom: 24px;
+    justify-content: center;
+  }
+  .btn-primary, .btn-secondary {
+    padding: 8px 20px;
+    font-size: 0.9rem;
   }
   .hero-stats {
-    flex-direction: column;
+    gap: 24px;
+    justify-content: center;
+  }
+  .stat-number {
+    font-size: 1.2rem;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+  }
+  .hero-image {
+    display: none;
+  }
+
+  /* Section headers */
+  .section-header {
+    margin-bottom: 32px;
+  }
+  .section-header h2 {
+    font-size: 1.6rem;
+  }
+  .section-header p {
+    font-size: 0.8rem;
+  }
+
+  /* Features grid */
+  .features-grid {
     gap: 16px;
-    align-items: center;
+  }
+  .feature-card {
+    padding: 20px 12px;
+  }
+  .feature-icon {
+    font-size: 32px;
+  }
+  .feature-card h4 {
+    font-size: 1rem;
+  }
+  .feature-card p {
+    font-size: 0.7rem;
+  }
+
+  /* Testimonials */
+  .testimonial-card {
+    padding: 20px;
+  }
+  .testimonial-avatar {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+  .testimonial-name {
+    font-size: 1rem;
+  }
+  .testimonial-text {
+    font-size: 0.8rem;
+  }
+
+  /* Delivery info */
+  .delivery-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .delivery-text h3 {
+    font-size: 1.4rem;
+  }
+  .delivery-text ul li {
+    font-size: 0.85rem;
+  }
+  .delivery-text li i {
+    width: 20px;
+  }
+
+  /* Newsletter */
+  .newsletter-content h3 {
+    font-size: 1.4rem;
+  }
+  .newsletter-form input {
+    padding: 10px 16px;
+    font-size: 0.85rem;
+  }
+  .newsletter-form button {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+  }
+
+  /* Footer */
+  .footer-grid {
+    gap: 24px;
+  }
+  .footer-col h4 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+  }
+  .footer-col ul li {
+    font-size: 0.75rem;
+  }
+  .social-links a {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  .copyright p {
+    font-size: 0.7rem;
+  }
+
+  /* Cart drawer */
+  .cart-drawer {
+    width: 100%;
+    right: -100%;
+    height: 85vh;
+    border-radius: 24px 24px 0 0;
+  }
+  .cart-drawer-header h3 {
+    font-size: 1.2rem;
+  }
+  .cart-item-image {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+  .cart-item-name {
+    font-size: 0.85rem;
+  }
+  .cart-item-price {
+    font-size: 0.8rem;
+  }
+  .cart-item-quantity span {
+    font-size: 0.8rem;
+  }
+  .summary-row {
+    font-size: 0.9rem;
+  }
+  .checkout-btn, .continue-shopping {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Extra small devices (<=480px) */
+@media (max-width: 480px) {
+  .nav-logo .logo-text {
+    font-size: 16px;
+  }
+  .nav-logo .logo-icon {
+    font-size: 20px;
+  }
+  .nav-icon span {
+    display: none;
+  }
+  .nav-icon i {
+    margin: 0;
+  }
+  .nav-actions {
+    gap: 16px;
+  }
+  .cart-count {
+    top: -10px;
+    right: -10px;
+  }
+  .hero-text h1 {
+    font-size: 1.5rem;
+  }
+  .hero-text p {
+    font-size: 0.8rem;
+  }
+  .section-header h2 {
+    font-size: 1.4rem;
+  }
+  .category-card {
+    width: 120px;
+    padding: 12px 8px;
+  }
+  .category-card .category-icon {
+    font-size: 28px;
+  }
+  .category-card h4 {
+    font-size: 0.8rem;
+  }
+  .product-card {
+    border-radius: 12px;
+  }
+  .product-image {
+    height: 100px;
+  }
+  .product-image div {
+    font-size: 36px !important;
+    height: 100px !important;
+  }
+  .product-info {
+    padding: 6px;
+  }
+  .product-name {
+    font-size: 0.75rem;
+  }
+  .product-name-telugu {
+    font-size: 0.6rem;
+  }
+  .current-price {
+    font-size: 0.85rem;
+  }
+  .product-unit {
+    font-size: 0.6rem;
+  }
+  .add-to-cart-btn {
+    padding: 4px;
+    font-size: 0.65rem;
+  }
+  .quick-qty {
+    font-size: 0.55rem;
+    padding: 2px 4px;
+  }
+  .wishlist-icon {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+    top: 5px;
+    right: 5px;
+  }
+  .out-of-stock {
+    font-size: 0.6rem;
+    padding: 2px 4px;
+  }
+  .product-badge {
+    font-size: 0.5rem;
+    padding: 2px 4px;
+    top: 5px;
+    left: 5px;
+  }
+  .stars {
+    font-size: 0.55rem;
+  }
+  .review-count {
+    font-size: 0.5rem;
+  }
+  .cart-drawer-details input, .cart-drawer-details textarea {
+    font-size: 0.75rem;
+    padding: 8px;
   }
 }
