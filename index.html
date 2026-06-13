@@ -38,26 +38,32 @@
   </nav>
 
   <main>
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <div class="hero-text">
-          <h1>Farm Fresh Vegetables <br>Delivered To Your Doorstep</h1>
-          <p>Fresh from local farms. Fast delivery. Best prices.</p>
-          <div class="hero-buttons">
-            <button class="btn-primary" id="shopNowBtn">Shop Now <i class="fas fa-arrow-right"></i></button>
-            <button class="btn-secondary" id="exploreCategoriesBtn">Explore Categories</button>
-          </div>
-          <div class="hero-stats">
-            <div class="stat"><span class="stat-number">5000+</span><span class="stat-label">Orders Delivered</span></div>
-            <div class="stat"><span class="stat-number">80+</span><span class="stat-label">Products</span></div>
-            <div class="stat"><span class="stat-number">Same Day</span><span class="stat-label">Delivery</span></div>
-          </div>
-        </div>
-        <div class="hero-image"><img src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=600&auto=format" alt="Fresh Vegetables"></div>
+    <!-- Hero Section with Background Video -->
+<section class="hero" id="home">
+  <!-- Background Video -->
+  <video class="hero-video" autoplay loop muted playsinline>
+    <source src="https://res.cloudinary.com/dahh1ibxe/video/upload/v1781322945/PROMOTIONAL_VIDEO_PROMPT__klcuu1.mp4" type="video/mp4">
+    <!-- Fallback image if video fails -->
+    Your browser does not support the video tag.
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1>Farm Fresh Vegetables <br>Delivered To Your Doorstep</h1>
+      <p>Fresh from local farms. Fast delivery. Best prices.</p>
+      <div class="hero-buttons">
+        <button class="btn-primary" id="shopNowBtn">Shop Now <i class="fas fa-arrow-right"></i></button>
+        <button class="btn-secondary" id="exploreCategoriesBtn">Explore Categories</button>
       </div>
-    </section>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-number">5000+</span><span class="stat-label">Orders Delivered</span></div>
+        <div class="stat"><span class="stat-number">80+</span><span class="stat-label">Products</span></div>
+        <div class="stat"><span class="stat-number">Same Day</span><span class="stat-label">Delivery</span></div>
+      </div>
+    </div>
+    <div class="hero-image"><img src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=600&auto=format" alt="Fresh Vegetables"></div>
+  </div>
+</section>
 
     <!-- Categories -->
     <section class="categories" id="categories">
@@ -71,7 +77,7 @@
       <div class="product-grid" id="productGrid"></div>
     </section>
 
-    <!-- Promo Banner -->
+    <!-- Promo Banner
     <section class="promo-banner" id="offers">
       <div class="promo-content">
         <div class="promo-text">
@@ -82,7 +88,7 @@
         </div>
         <div class="promo-badge"><span>🎯</span><div>Free Delivery<br>Above ₹499</div></div>
       </div>
-    </section>
+    </section> -->
 
     <!-- Why Choose Us -->
     <section class="features">
@@ -136,26 +142,27 @@
 
   <!-- Cart Drawer -->
   <div class="cart-drawer" id="cartDrawer">
-    <div class="cart-drawer-header">
-      <h3>Your Cart <span id="cartDrawerCount">0</span></h3>
-      <div><button class="clear-cart-btn" id="clearCartBtn">🗑️ Clear</button><button class="close-drawer" id="closeDrawer">&times;</button></div>
-    </div>
-    <div class="cart-drawer-items" id="cartDrawerItems"></div>
-    <div class="cart-drawer-coupon"><input type="text" placeholder="Coupon code" id="couponCode"><button id="applyCoupon">Apply</button></div>
-    <div class="cart-drawer-details">
-      <div class="input-field"><label>Full Name</label><input type="text" id="checkoutName" placeholder="Enter your full name"></div>
-      <div class="input-field"><label>Mobile Number</label><input type="tel" id="checkoutMobile" placeholder="10-digit mobile number"></div>
-      <div class="input-field"><label>Delivery Address</label><textarea id="checkoutAddress" rows="2" placeholder="House No., Street, Landmark, City, Pincode"></textarea><button type="button" id="getLocationBtn" class="location-btn">📍 Get Current Location</button></div>
-    </div>
-    <div class="cart-drawer-summary">
-      <div class="summary-row">Subtotal: <span id="drawerSubtotal">₹0</span></div>
-      <div class="summary-row">Delivery: <span id="drawerDelivery">₹0</span></div>
-      <div class="summary-row discount-row" id="discountRow" style="display:none;">Discount: <span id="drawerDiscount">₹0</span></div>
-      <div class="summary-row total">Total: <span id="drawerTotal">₹0</span></div>
-      <button class="checkout-btn" id="checkoutBtn">Place Order (COD)</button>
-      <button class="continue-shopping" id="continueShopping">Continue Shopping</button>
-    </div>
+  <div class="cart-drawer-header">
+    <h3>Your Cart <span id="cartDrawerCount">0</span></h3>
+    <div><button class="clear-cart-btn" id="clearCartBtn">🗑️ Clear</button><button class="close-drawer" id="closeDrawer">&times;</button></div>
   </div>
+  <div class="cart-drawer-items" id="cartDrawerItems"></div>
+  <!-- No coupon row -->
+  <div class="cart-drawer-details">
+    <div class="input-field"><label>Full Name</label><input type="text" id="checkoutName" placeholder="Enter your full name"></div>
+    <div class="input-field"><label>Mobile Number</label><input type="tel" id="checkoutMobile" placeholder="10-digit mobile number"></div>
+    <div class="input-field"><label>Delivery Address</label><textarea id="checkoutAddress" rows="2" placeholder="House No., Street, Landmark, City, Pincode"></textarea>
+    <button type="button" id="getLocationBtn" class="location-btn">📍 Get Current Location</button></div>
+  </div>
+  <div class="cart-drawer-summary">
+    <div class="summary-row">Subtotal: <span id="drawerSubtotal">₹0</span></div>
+    <div class="summary-row">Delivery: <span id="drawerDelivery">₹0</span></div>
+    <!-- No discount row -->
+    <div class="summary-row total">Total: <span id="drawerTotal">₹0</span></div>
+    <button class="checkout-btn" id="checkoutBtn">Place Order (COD)</button>
+    <button class="continue-shopping" id="continueShopping">Continue Shopping</button>
+  </div>
+</div>
   <div class="drawer-overlay" id="drawerOverlay"></div>
 
   <!-- Quick View Modal -->
