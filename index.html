@@ -22,7 +22,7 @@
         <input type="text" id="globalSearch" placeholder="Search fresh vegetables...">
       </div>
       <div class="nav-actions">
-        <button class="nav-icon wishlist-btn"><i class="far fa-heart"></i><span>Wishlist</span></button>
+        <!-- Wishlist button removed -->
         <button class="nav-icon cart-btn" id="cartBtn"><i class="fas fa-shopping-cart"></i><span>Cart</span><span class="cart-count" id="cartCountDesktop">0</span></button>
         <button class="nav-icon user-btn" id="userBtn"><i class="far fa-user-circle"></i><span>Account</span></button>
       </div>
@@ -31,7 +31,7 @@
     <div class="mobile-menu" id="mobileMenu">
       <a href="#home">Home</a><a href="#categories">Categories</a><a href="#products">Products</a>
       <a href="#offers">Offers</a><a href="#contact">Contact</a>
-      <button class="mobile-wishlist"><i class="far fa-heart"></i> Wishlist</button>
+      <!-- Mobile wishlist button removed -->
       <button class="mobile-cart"><i class="fas fa-shopping-cart"></i> Cart</button>
       <button class="mobile-user"><i class="far fa-user-circle"></i> Account</button>
     </div>
@@ -40,10 +40,8 @@
   <main>
     <!-- Hero Section with Background Video -->
 <section class="hero" id="home">
-  <!-- Background Video -->
   <video class="hero-video" autoplay loop muted playsinline>
     <source src="https://res.cloudinary.com/dahh1ibxe/video/upload/v1781322945/PROMOTIONAL_VIDEO_PROMPT__klcuu1.mp4" type="video/mp4">
-    <!-- Fallback image if video fails -->
     Your browser does not support the video tag.
   </video>
   <div class="hero-overlay"></div>
@@ -76,19 +74,6 @@
       <div class="section-header"><h2>Today's <span>Fresh Picks</span></h2><p>Handpicked for you from local farms</p></div>
       <div class="product-grid" id="productGrid"></div>
     </section>
-
-    <!-- Promo Banner
-    <section class="promo-banner" id="offers">
-      <div class="promo-content">
-        <div class="promo-text">
-          <span class="promo-tag">Limited Time Offer</span>
-          <h3>Flat 20% Off on First Order</h3>
-          <p>Use code: <strong>FRESH20</strong> at checkout</p>
-          <button class="btn-promo" id="copyCodeBtn">Copy Code</button>
-        </div>
-        <div class="promo-badge"><span>🎯</span><div>Free Delivery<br>Above ₹499</div></div>
-      </div>
-    </section> -->
 
     <!-- Why Choose Us -->
     <section class="features">
@@ -147,7 +132,6 @@
     <div><button class="clear-cart-btn" id="clearCartBtn">🗑️ Clear</button><button class="close-drawer" id="closeDrawer">&times;</button></div>
   </div>
   <div class="cart-drawer-items" id="cartDrawerItems"></div>
-  <!-- No coupon row -->
   <div class="cart-drawer-details">
     <div class="input-field"><label>Full Name</label><input type="text" id="checkoutName" placeholder="Enter your full name"></div>
     <div class="input-field"><label>Mobile Number</label><input type="tel" id="checkoutMobile" placeholder="10-digit mobile number"></div>
@@ -157,7 +141,6 @@
   <div class="cart-drawer-summary">
     <div class="summary-row">Subtotal: <span id="drawerSubtotal">₹0</span></div>
     <div class="summary-row">Delivery: <span id="drawerDelivery">₹0</span></div>
-    <!-- No discount row -->
     <div class="summary-row total">Total: <span id="drawerTotal">₹0</span></div>
     <button class="checkout-btn" id="checkoutBtn">Place Order (COD)</button>
     <button class="continue-shopping" id="continueShopping">Continue Shopping</button>
@@ -192,21 +175,21 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
-  <!-- Firebase config – REPLACE WITH YOUR OWN -->
   <script>
     const firebaseConfig = {
-  apiKey: "AIzaSyBVXWlsrhuAEpf5OdxhKmBX8bllcttAvuY",
-  authDomain: "sree-veg-mart.firebaseapp.com",
-  projectId: "sree-veg-mart",
-  storageBucket: "sree-veg-mart.firebasestorage.app",
-  messagingSenderId: "254694157204",
-  appId: "1:254694157204:web:f37a2a3f4d9e42fd483d81",
-  measurementId: "G-9L57FMC48M"
-};
+      apiKey: "AIzaSyBVXWlsrhuAEpf5OdxhKmBX8bllcttAvuY",
+      authDomain: "sree-veg-mart.firebaseapp.com",
+      projectId: "sree-veg-mart",
+      storageBucket: "sree-veg-mart.firebasestorage.app",
+      messagingSenderId: "254694157204",
+      appId: "1:254694157204:web:f37a2a3f4d9e42fd483d81",
+      measurementId: "G-9L57FMC48M"
+    };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
   </script>
 
+  <script src="image-urls.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
