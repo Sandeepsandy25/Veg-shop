@@ -1,15 +1,13 @@
 /**
- * SREE VEG MART – MAIN WEBSITE (No Offers/Discounts)
+ * SREE VEG MART – MAIN WEBSITE (No Offers/Discounts, No Wishlist)
  * Orange & Cream theme.
  * Delivery charges: <100=₹50, 100-200=₹30, 200-500=₹20, >=500=Free
  * Flexible quantity: supports 250g/500g/1kg/2kg.
+ * Real images from Cloudinary – using image-urls.js mapping.
  */
 
 let products = [];
 let cart = [];
-let wishlist = [];
-let couponApplied = false;      // kept but will never be used
-let couponDiscount = 0;
 
 // Features Data (static)
 const features = [
@@ -120,20 +118,21 @@ function renderProducts(productArray) {
         <button type="button" class="quick-qty" data-id="${product.id}" data-qty="2">2kg</button>
       </div>
     ` : '';
+    const imageUrl = typeof getProductImage === 'function' ? getProductImage(product.id) : product.emoji;
     return `
       <div class="product-card" data-id="${product.id}">
         ${product.bestSeller ? '<div class="product-badge">🔥 Best Seller</div>' : ''}
         <div class="product-image">
-          <div style="font-size:80px; display:flex; align-items:center; justify-content:center; height:220px; background:#f3f4f6;">${product.emoji || '🥗'}</div>
+          <img src="${imageUrl}" 
+               alt="${product.name}" 
+               style="width:100%; height:100%; object-fit:cover; display:block;">
           ${!product.available ? '<div class="out-of-stock">Out of Stock</div>' : ''}
-          <div class="wishlist-icon ${wishlist.includes(product.id) ? 'active' : ''}" data-id="${product.id}"><i class="far fa-heart"></i></div>
         </div>
         <div class="product-info">
           <div class="product-category">${product.category}</div>
           <div class="product-name">${product.name}</div>
           <div class="product-name-telugu">${product.telugu || ''}</div>
           <div class="product-rating"><div class="stars">${'★'.repeat(Math.floor(product.rating || 4))}${'☆'.repeat(5-Math.floor(product.rating || 4))}</div><div class="review-count">(${product.reviews || 0})</div></div>
-          <!-- Only current price shown, no discount info -->
           <div class="product-price-row"><span class="current-price">₹${product.price}</span></div>
           <div class="product-unit">Per ${product.unit}</div>
           <div class="quantity-add">
@@ -160,7 +159,7 @@ function handleQuickQty(e) {
   showToast(`Quantity set to ${qty} ${qty >= 1 ? 'kg' : 'g'}`);
 }
 
-// ========== CART & WISHLIST (localStorage) – no coupon logic ==========
+// ========== CART (localStorage) – no wishlist ==========
 function loadCart() {
   const saved = localStorage.getItem('sreeveg_cart');
   if (saved) cart = JSON.parse(saved);
@@ -168,22 +167,6 @@ function loadCart() {
 }
 function saveCart() {
   localStorage.setItem('sreeveg_cart', JSON.stringify(cart));
-}
-function loadWishlist() {
-  const saved = localStorage.getItem('sreeveg_wishlist');
-  if (saved) wishlist = JSON.parse(saved);
-  updateWishlistUI();
-}
-function saveWishlist() {
-  localStorage.setItem('sreeveg_wishlist', JSON.stringify(wishlist));
-  updateWishlistUI();
-}
-function updateWishlistUI() {
-  document.querySelectorAll('.wishlist-icon').forEach(icon => {
-    const id = icon.dataset.id;
-    if (wishlist.includes(id)) icon.classList.add('active');
-    else icon.classList.remove('active');
-  });
 }
 function updateCartUI() {
   updateCartDrawer();
@@ -206,9 +189,12 @@ function updateCartDrawer() {
   drawerItems.innerHTML = cart.map(item => {
     const product = products.find(p => p.id == item.id);
     const unitDisplay = item.unit === 'kg' ? `${item.quantity} kg` : `${Math.round(item.quantity)} ${item.unit}`;
+    const imageUrl = typeof getProductImage === 'function' ? getProductImage(item.id) : (product?.emoji || '🥗');
     return `
       <div class="cart-item" data-id="${item.id}">
-        <div class="cart-item-image">${product?.emoji || '🥗'}</div>
+        <div class="cart-item-image">
+          <img src="${imageUrl}" alt="${item.name}" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+        </div>
         <div class="cart-item-details">
           <div class="cart-item-name">${item.name}</div>
           <div class="cart-item-price">₹${item.price} / ${item.unit}</div>
@@ -273,8 +259,6 @@ function removeCartItem(id) {
 }
 function clearCart() {
   cart = [];
-  couponApplied = false;
-  couponDiscount = 0;
   saveCart();
   updateCartUI();
   showToast('Cart cleared');
@@ -282,19 +266,16 @@ function clearCart() {
 function updateDrawerTotals() {
   const subtotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
   const deliveryCharge = getDeliveryFee(subtotal);
-  // No discount
   const total = subtotal + deliveryCharge;
   const subtotalSpan = document.getElementById('drawerSubtotal');
   const deliverySpan = document.getElementById('drawerDelivery');
   const totalSpan = document.getElementById('drawerTotal');
-  const discountRow = document.getElementById('discountRow');
   if (subtotalSpan) subtotalSpan.innerText = `₹${subtotal.toFixed(2)}`;
   if (deliverySpan) {
     if (subtotal === 0) deliverySpan.innerText = '₹0';
     else if (deliveryCharge === 0) deliverySpan.innerText = 'Free';
     else deliverySpan.innerText = `₹${deliveryCharge}`;
   }
-  if (discountRow) discountRow.style.display = 'none'; // hide discount row
   if (totalSpan) totalSpan.innerText = `₹${total.toFixed(2)}`;
 }
 
@@ -325,20 +306,6 @@ function setupGlobalEventDelegation() {
       showToast(`${product.name} (${unitDisplay}) added to cart!`);
       if (qtyInput) qtyInput.value = 1;
     }
-    const wishBtn = e.target.closest('.wishlist-icon');
-    if (wishBtn) {
-      e.preventDefault(); e.stopPropagation();
-      const id = wishBtn.dataset.id;
-      if (wishlist.includes(id)) {
-        wishlist = wishlist.filter(i => i != id);
-        showToast('Removed from wishlist');
-      } else {
-        wishlist.push(id);
-        showToast('Added to wishlist!');
-      }
-      saveWishlist();
-      wishBtn.classList.toggle('active', wishlist.includes(id));
-    }
     const qvBtn = e.target.closest('.quickview-btn');
     if (qvBtn) {
       e.preventDefault();
@@ -361,9 +328,12 @@ function showQuickViewModal(product) {
   const isKg = product.unit === 'kg';
   const step = isKg ? '0.1' : '1';
   const min = isKg ? '0.1' : '1';
+  const imageUrl = typeof getProductImage === 'function' ? getProductImage(product.id) : product.emoji;
   body.innerHTML = `
     <div class="quickview-product">
-      <div class="quickview-image"><div style="font-size:100px;">${product.emoji || '🥗'}</div></div>
+      <div class="quickview-image">
+        <img src="${imageUrl}" alt="${product.name}" style="width:100%; max-width:300px; height:auto; border-radius:16px; display:block; margin:0 auto;">
+      </div>
       <div class="quickview-details">
         <h2>${product.name}</h2>
         <div style="font-size:0.9rem; color:#6B7280;">${product.telugu || ''}</div>
@@ -402,7 +372,7 @@ function showQuickViewModal(product) {
   }
 }
 
-// ========== CHECKOUT (WhatsApp) – no coupon ==========
+// ========== CHECKOUT (WhatsApp) ==========
 function initCheckout() {
   const checkoutBtn = document.getElementById('checkoutBtn');
   if (checkoutBtn) {
@@ -477,7 +447,7 @@ function initLocationButton() {
   });
 }
 
-// ========== SEARCH, NEWSLETTER (no coupon) ==========
+// ========== SEARCH, NEWSLETTER ==========
 function initSearch() {
   const searchInput = document.getElementById('globalSearch');
   if (searchInput) searchInput.addEventListener('input', (e) => {
@@ -485,9 +455,6 @@ function initSearch() {
     const filtered = products.filter(p => p.name.toLowerCase().includes(query) || (p.telugu && p.telugu.toLowerCase().includes(query)));
     renderProducts(filtered);
   });
-}
-function initCoupon() {
-  // Removed – no coupon functionality
 }
 function initNewsletter() {
   const subscribeBtn = document.getElementById('newsletterSubscribe');
@@ -550,9 +517,6 @@ function initCTAScroll() {
   const explore = document.getElementById('exploreCategoriesBtn');
   if (shopNow) shopNow.addEventListener('click', () => document.querySelector('#products')?.scrollIntoView({ behavior: 'smooth' }));
   if (explore) explore.addEventListener('click', () => document.querySelector('#categories')?.scrollIntoView({ behavior: 'smooth' }));
-}
-function initCopyCode() {
-  // Removed – no coupon
 }
 function showToast(message) {
   let toast = document.querySelector('.toast');
@@ -635,10 +599,8 @@ function initAuth() {
 document.addEventListener('DOMContentLoaded', async () => {
   await loadProducts();
   loadCart();
-  loadWishlist();
   setupGlobalEventDelegation();
   initSearch();
-  // initCoupon removed
   initAuth();
   initNewsletter();
   initCheckout();
@@ -646,7 +608,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   initMobileMenu();
   initSmoothScroll();
   initCTAScroll();
-  // initCopyCode removed
   initLocationButton();
   renderTestimonials();
 });
